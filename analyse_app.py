@@ -178,6 +178,8 @@ def maak_schoon(ruwe_tekst):
     return schoon_platte_tekst(ruwe_tekst)
 
 # === GRAFIEK TEKENEN ===
+import networkx as nx
+
 def teken_lussen_grafiek(structuur):
     lussen = structuur.get("lussen", [])
     terugkoppelingen = structuur.get("terugkoppelingen", [])
@@ -186,12 +188,19 @@ def teken_lussen_grafiek(structuur):
     if not lussen:
         return None
 
-    n = len(lussen)
-    posities = {}
-    for i, lus in enumerate(lussen):
-        hoek = 2 * math.pi * i / n
-        posities[lus["id"]] = (math.cos(hoek), math.sin(hoek))
+    # === Bouw een netwerk ===
+    G = nx.Graph()
+    for lus in lussen:
+        G.add_node(lus["id"])
 
+    for tb in terugkoppelingen:
+        if tb["van"] in G and tb["naar"] in G:
+            G.add_edge(tb["van"], tb["naar"], weight=tb.get("sterkte", 1))
+
+    # === Krachtenlayout ===
+    pos = nx.spring_layout(G, k=0.8, iterations=100, seed=42)
+
+    # === Kleuren op basis van tijdschaal ===
     kleur_map = {
         "seconden": "#ef4444", "minuten": "#f97316",
         "dagen": "#eab308", "maanden": "#22c55e",
@@ -199,6 +208,79 @@ def teken_lussen_grafiek(structuur):
     }
 
     fig = go.Figure()
+
+    # === Teken de terugkoppelingen als pijlen ===
+    for tb in terugkoppelingen:
+        if tb["van"] not in pos or tb["naar"] not in pos:
+            continue
+        van = pos[tb["van"]]
+        naar = pos[tb["naar"]]
+        sterkte = tb.get("sterkte", 1)
+        kleur = "#ef4444" if tb.get("type") == "versterkend" else "#3b82f6"
+
+        # Teken een pijl met een pijlpunt
+        fig.add_trace(go.Scatter(
+            x=[van[0], naar[0]],
+            y=[van[1], naar[1]],
+            mode="lines",
+            line=dict(width=sterkte * 1.5, color=kleur),
+            hoverinfo="text",
+            text=[tb.get("label", ""), tb.get("label", "")],
+            showlegend=False,
+        ))
+
+    # === Teken de lussen als bollen ===
+    for lus in lussen:
+        if lus["id"] not in pos:
+            continue
+        x, y = pos[lus["id"]]
+        kleur = kleur_map.get(lus.get("tijdschaal", "maanden"), "#94a3b8")
+        grootte = lus.get("omvang", 3) * 15
+
+        fig.add_trace(go.Scatter(
+            x=[x], y=[y],
+            mode="markers+text",
+            marker=dict(size=grootte, color=kleur, line=dict(width=2, color="white")),
+            text=[f"{lus['id']}: {lus['naam']}"],
+            textposition="middle center",
+            hoverinfo="text",
+            hovertext=f"{lus['naam']}<br>Tijdschaal: {lus.get('tijdschaal', '?')}",
+            showlegend=False,
+        ))
+
+    # === Teken de triggers als sterren ===
+    for trigger in triggers:
+        if trigger["naar"] not in pos:
+            continue
+        naar = pos[trigger["naar"]]
+        hoek = math.atan2(naar[1], naar[0])
+        x = naar[0] + 0.2 * math.cos(hoek)
+        y = naar[1] + 0.2 * math.sin(hoek)
+
+        fig.add_trace(go.Scatter(
+            x=[x], y=[y],
+            mode="markers+text",
+            marker=dict(size=15, color="#facc15", symbol="star"),
+            text=[trigger.get("label", "")],
+            textposition="top center",
+            hoverinfo="text",
+            hovertext=trigger.get("label", ""),
+            showlegend=False,
+        ))
+
+    # === Layout ===
+    fig.update_layout(
+        title="Lussen-netwerk",
+        showlegend=False,
+        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+        plot_bgcolor="#0f172a",
+        paper_bgcolor="#0f172a",
+        font=dict(color="white"),
+        height=700,
+        margin=dict(l=20, r=20, t=50, b=20),
+    )
+    return fig
 
     # Terugkoppelingen
     for tb in terugkoppelingen:
