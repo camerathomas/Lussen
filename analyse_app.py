@@ -81,7 +81,7 @@ def maak_schoon(ruwe_tekst):
 st.title("DenkKrant — Universele Analyse")
 st.markdown("Plak een tekst (artikel, verhaal, verslag) en laat de sleutel zijn werk doen.")
 
-api_key = st.secrets.get("GOOGLE_API_KEY", "")
+api_key = st.secrets.get("GEMINI_API_KEY", "")
 if not api_key:
     st.error("Geen API-sleutel gevonden. Stel GOOGLE_API_KEY in via de Secrets-instellingen.")
 
