@@ -81,8 +81,9 @@ def maak_schoon(ruwe_tekst):
 st.title("DenkKrant — Universele Analyse")
 st.markdown("Plak een tekst (artikel, verhaal, verslag) en laat de sleutel zijn werk doen.")
 
-api_key = st.text_input("Google Gemini API-sleutel", type="password",
-                         help="Vraag een gratis sleutel aan op aistudio.google.com")
+api_key = st.secrets.get("GOOGLE_API_KEY", "")
+if not api_key:
+    st.error("Geen API-sleutel gevonden. Stel GOOGLE_API_KEY in via de Secrets-instellingen.")
 
 ruwe_tekst = st.text_area("Plak hier je tekst", height=300,
                            placeholder="Plak een artikel van minimaal 800 woorden...")
