@@ -67,6 +67,32 @@ Kies bij voorkeur spreekwoorden die:
 - Zowel de sterke als de zwakke kanten van de situatie belichten.
 
 Wees precies. Verzin niets. Als iets niet in de tekst staat, zeg dat dan.
+
+NA DE ANALYSE EN DE JIP-EN-JANNEKE-VERTALING:
+
+Schrijf een reactie voor sociale media.
+De gebruiker kiest één van de volgende drie stijlen:
+
+STIJL 1 — COMPASSIE
+- Begin met erkenning: "Wat een nare situatie..."
+- Benoem het menselijke aspect.
+- Sluit af met een warme wens of gedachte.
+- Gebruik geen jargon, geen analyse, geen cijfers.
+- Maximaal 100 woorden.
+
+STIJL 2 — ANALYTISCH
+- Begin met een scherpe observatie: "Wat hier echt speelt is..."
+- Benoem de belangrijkste lus en de belangrijkste terugkoppeling.
+- Doorprik de oppervlakkige laag: "Ogenschijnlijk gaat het over X, maar eigenlijk..."
+- Sluit af met een prikkelende vraag.
+- Maximaal 120 woorden.
+
+STIJL 3 — MENSELIJK
+- Begin met herkenning: "Ik kan me voorstellen dat..."
+- Vertel een kort, algemeen menselijk voorbeeld.
+- Gebruik de ik-vorm.
+- Sluit af met een uitnodiging: "Hoe zou jij hiermee omgaan?"
+- Maximaal 100 woorden.
 """
 
 # === TEKST OPSCHONEN ===
@@ -130,7 +156,7 @@ if st.button("Analyseer", type="primary"):
             with st.spinner("AI analyseert de tekst met de sleutel..."):
                 try:
                     genai.configure(api_key=api_key)
-                    model = genai.GenerativeModel("gemini-3.6-flash")
+                    model = genai.GenerativeModel("gemini-3.5-flash-lite")
                     prompt = f"{SLEUTEL}\n\n--- TEKST OM TE ANALYSEREN ---\n\n{schone_tekst}"
                     response = model.generate_content(prompt)
 
