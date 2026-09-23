@@ -93,6 +93,28 @@ STIJL 3 — MENSELIJK
 - Gebruik de ik-vorm.
 - Sluit af met een uitnodiging: "Hoe zou jij hiermee omgaan?"
 - Maximaal 100 woorden.
+
+IDENTIFICATIE VAN VERBORGEN PREMISSEN:
+
+Analyseer de tekst op verborgen premissen: aannames die de schrijver niet expliciet maakt,
+maar die wel nodig zijn om de conclusies te laten kloppen.
+
+Voor elke verborgen premisse:
+1. Citeer de passage waar de premisse impliciet blijft.
+2. Formuleer de verborgen premisse in één heldere zin.
+3. Leg uit waarom deze premisse nodig is voor de redenering.
+4. Geef aan of de premisse aanvaardbaar is, twijfelachtig, of onjuist.
+5. Als de premisse onjuist is, leg uit welk effect dat heeft op de conclusie.
+
+Let op deze specifieke soorten verborgen premissen:
+- Enthymeem: een ontbrekende premisse in een syllogisme.
+- Verzwegen waardeoordeel: een normatieve aanname die niet wordt genoemd.
+- Verzwegen definitie: een begrip dat impliciet een bepaalde betekenis krijgt.
+- Verzwegen oorzaak-gevolg relatie: een verband dat als vanzelfsprekend wordt aangenomen.
+- Verzwegen autoriteit: een beroep op een bron die niet wordt genoemd.
+- Verzwegen algemene regel: een "iedereen weet dat..." aanname.
+
+Geef maximaal 5 verborgen premissen, geordend op belangrijkheid.
 """
 
 # === TEKST OPSCHONEN ===
