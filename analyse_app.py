@@ -59,6 +59,35 @@ Let op deze soorten: enthymeem, verzwegen waardeoordeel, verzwegen definitie,
 verzwegen oorzaak-gevolg relatie, verzwegen autoriteit, verzwegen algemene regel.
 Geef maximaal 5 verborgen premissen, geordend op belangrijkheid.
 
+=== DEEL 2.5: UNIVERSELE VERGELIJKING ===
+
+Zoek naar het overheersende patroon in de situatie.
+Vergelijk dit patroon met vergelijkbare patronen in andere domeinen.
+
+Kies 3 tot 5 domeinen uit deze lijst:
+- Plantenrijk (groei, bloei, verval, seizoenen)
+- Dierenrijk (predatie, symbiose, competitie, kuddegedrag)
+- Natuurkunde (zwaartekracht, entropie, faseovergangen)
+- Kosmos (sterren, planeten, zwarte gaten)
+- Maatschappij (politiek, cultuur, instituties)
+- Economie (markten, cycli, schaarste)
+- Technologie (innovaties, adoptiecurves, netwerkeffecten)
+- Menselijk lichaam (immuniteit, metabolisme, zenuwstelsel)
+- Spel (strategie, bondgenootschappen, verraad)
+- Verhaal (held, schurk, crisis, transformatie)
+
+Voor elk domein:
+1. Noem het domein.
+2. Beschrijf het vergelijkbare patroon in dat domein.
+3. Leg uit waarom het patroon vergelijkbaar is.
+4. Geef aan of de vergelijking volledig of gedeeltelijk opgaat.
+5. Trek een conclusie: wat leert deze vergelijking ons over de situatie?
+
+Kies domeinen die:
+- Voor een breed publiek begrijpelijk zijn.
+- Een patroon laten zien dat echt vergelijkbaar is.
+- Iets toevoegen aan de analyse dat nog niet genoemd is.
+
 === DEEL 3: JIP-EN-JANNEKE-VERTALING ===
 Vertaal de analyse naar Jip-en-Janneke-taal.
 - Maximaal 300 woorden.
