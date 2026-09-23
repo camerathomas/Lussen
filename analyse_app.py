@@ -50,6 +50,22 @@ Vertaal de analyse naar Jip-en-Janneke-taal.
 - Vermijd jargon: geen "emergentie", "terugkoppeling", "selectiecriterium".
 - Schrijf alsof je het aan een slimme vriend vertelt die niets van het model weet.
 
+NA DE JIP-EN-JANNEKE-ANALYSE:
+
+Geef 3 tot 5 spreekwoorden, uitdrukkingen of allegorieën die van toepassing zijn op deze situatie.
+Kies ze zo dat ze samen een zo volledig mogelijk beeld geven van de lussen, de verhoudingen en de emergentie.
+
+Voor elk spreekwoord:
+- Noem het spreekwoord.
+- Leg in één zin uit waarom het past.
+- Koppel het aan een specifieke lus of verhouding uit de analyse.
+- Geef aan of het spreekwoord de situatie volledig dekt, of slechts een deel ervan.
+
+Kies bij voorkeur spreekwoorden die:
+- Universeel zijn (niet cultuurgebonden).
+- Alleen het patroon beschrijven, niet de specifieke inhoud.
+- Zowel de sterke als de zwakke kanten van de situatie belichten.
+
 Wees precies. Verzin niets. Als iets niet in de tekst staat, zeg dat dan.
 """
 
