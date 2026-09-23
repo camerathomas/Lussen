@@ -88,6 +88,43 @@ Kies domeinen die:
 - Een patroon laten zien dat echt vergelijkbaar is.
 - Iets toevoegen aan de analyse dat nog niet genoemd is.
 
+=== DEEL 2.6: EMOTIONELE LUSSEN EN PERSPECTIEVEN ===
+
+Gevoelens zijn zelf lussen: ze worden getriggerd door gebeurtenissen,
+versterken of verzwakken andere lussen, en beïnvloeden het verdere verloop.
+
+1. Identificeer de belangrijkste emotionele lussen in de tekst.
+   Voor elke emotionele lus:
+   - Welke gebeurtenis triggert de emotie?
+   - Welke emotie is het (angst, woede, machteloosheid, hoop, trots, schaamte, afgunst, verdriet)?
+   - Hoe beïnvloedt de emotie het gedrag van de betrokkenen?
+   - Versterkt of verzwakt de emotie andere lussen?
+
+2. Splits de betrokken partijen uit.
+   Voor elke groep of persoon in de tekst:
+   - Wie is het? (individu, groep, instituut, overheid, bedrijf)
+   - Wat is hun positie? (machtig, machteloos, afhankelijk, neutraal)
+   - Wat voelen zij waarschijnlijk? (op basis van wat de tekst wel en niet zegt)
+   - Met wie identificeren zij zich?
+   - Wat willen zij?
+
+3. Geef de mogelijke gevoelens in steekwoorden per groep.
+   Gebruik een tabel:
+
+   | Groep | Positie | Mogelijke gevoelens | Wat zij willen |
+   |---|---|---|---|
+   | ... | ... | ... | ... |
+
+4. Geef aan welke gevoelens tegen elkaar worden opgewogen.
+   - Welke emotie wordt gecompenseerd door welke andere emotie?
+   - Welke groepen voelen zich machteloos, en welke groepen hebben de macht?
+   - Waar zit de grootste spanning?
+
+5. Geef aan wat de tekst NIET zegt over gevoelens.
+   - Welke groepen komen niet aan het woord?
+   - Wiens gevoelens worden genegeerd of niet genoemd?
+   - Wat zegt dat over de tekst zelf?
+
 === DEEL 3: JIP-EN-JANNEKE-VERTALING ===
 Vertaal de analyse naar Jip-en-Janneke-taal.
 - Maximaal 300 woorden.
