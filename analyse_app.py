@@ -1,12 +1,15 @@
 import streamlit as st
 import re
+import json
+import math
 from bs4 import BeautifulSoup
 import google.generativeai as genai
+import plotly.graph_objects as go
 
 # === INSTELLINGEN ===
 st.set_page_config(page_title="DenkKrant Analyse", layout="wide")
 
-# === DE SLEUTEL (pas dit aan naar jouw formulering) ===
+# === DE SLEUTEL ===
 SLEUTEL = """
 Je bent een analysemachine die werkt met een universele sleutel van processen.
 
@@ -55,86 +58,37 @@ Voor elke verborgen premisse:
 4. Geef aan of de premisse aanvaardbaar, twijfelachtig of onjuist is.
 5. Als de premisse onjuist is, leg uit welk effect dat heeft op de conclusie.
 
-Let op deze soorten: enthymeem, verzwegen waardeoordeel, verzwegen definitie,
+Let op: enthymeem, verzwegen waardeoordeel, verzwegen definitie,
 verzwegen oorzaak-gevolg relatie, verzwegen autoriteit, verzwegen algemene regel.
 Geef maximaal 5 verborgen premissen, geordend op belangrijkheid.
 
-=== DEEL 2.5: UNIVERSELE VERGELIJKING ===
+=== DEEL 3: EMOTIONELE LUSSEN EN PERSPECTIEVEN ===
+Gevoelens zijn zelf lussen. Splits de betrokken partijen uit.
 
-Zoek naar het overheersende patroon in de situatie.
-Vergelijk dit patroon met vergelijkbare patronen in andere domeinen.
+Voor elke groep of persoon in de tekst:
+- Wie is het?
+- Wat is hun positie? (machtig, machteloos, afhankelijk, neutraal)
+- Wat voelen zij waarschijnlijk?
+- Met wie identificeren zij zich?
+- Wat willen zij?
 
-Kies 3 tot 5 domeinen uit deze lijst:
-- Plantenrijk (groei, bloei, verval, seizoenen)
-- Dierenrijk (predatie, symbiose, competitie, kuddegedrag)
-- Natuurkunde (zwaartekracht, entropie, faseovergangen)
-- Kosmos (sterren, planeten, zwarte gaten)
-- Maatschappij (politiek, cultuur, instituties)
-- Economie (markten, cycli, schaarste)
-- Technologie (innovaties, adoptiecurves, netwerkeffecten)
-- Menselijk lichaam (immuniteit, metabolisme, zenuwstelsel)
-- Spel (strategie, bondgenootschappen, verraad)
-- Verhaal (held, schurk, crisis, transformatie)
+Geef een tabel:
+| Groep | Positie | Mogelijke gevoelens | Wat zij willen |
 
-Voor elk domein:
-1. Noem het domein.
-2. Beschrijf het vergelijkbare patroon in dat domein.
-3. Leg uit waarom het patroon vergelijkbaar is.
-4. Geef aan of de vergelijking volledig of gedeeltelijk opgaat.
-5. Trek een conclusie: wat leert deze vergelijking ons over de situatie?
+Geef aan:
+- Welke gevoelens tegen elkaar worden opgewogen.
+- Welke groepen zich machteloos voelen.
+- Wiens gevoelens niet genoemd worden.
 
-Kies domeinen die:
-- Voor een breed publiek begrijpelijk zijn.
-- Een patroon laten zien dat echt vergelijkbaar is.
-- Iets toevoegen aan de analyse dat nog niet genoemd is.
-
-=== DEEL 2.6: EMOTIONELE LUSSEN EN PERSPECTIEVEN ===
-
-Gevoelens zijn zelf lussen: ze worden getriggerd door gebeurtenissen,
-versterken of verzwakken andere lussen, en beïnvloeden het verdere verloop.
-
-1. Identificeer de belangrijkste emotionele lussen in de tekst.
-   Voor elke emotionele lus:
-   - Welke gebeurtenis triggert de emotie?
-   - Welke emotie is het (angst, woede, machteloosheid, hoop, trots, schaamte, afgunst, verdriet)?
-   - Hoe beïnvloedt de emotie het gedrag van de betrokkenen?
-   - Versterkt of verzwakt de emotie andere lussen?
-
-2. Splits de betrokken partijen uit.
-   Voor elke groep of persoon in de tekst:
-   - Wie is het? (individu, groep, instituut, overheid, bedrijf)
-   - Wat is hun positie? (machtig, machteloos, afhankelijk, neutraal)
-   - Wat voelen zij waarschijnlijk? (op basis van wat de tekst wel en niet zegt)
-   - Met wie identificeren zij zich?
-   - Wat willen zij?
-
-3. Geef de mogelijke gevoelens in steekwoorden per groep.
-   Gebruik een tabel:
-
-   | Groep | Positie | Mogelijke gevoelens | Wat zij willen |
-   |---|---|---|---|
-   | ... | ... | ... | ... |
-
-4. Geef aan welke gevoelens tegen elkaar worden opgewogen.
-   - Welke emotie wordt gecompenseerd door welke andere emotie?
-   - Welke groepen voelen zich machteloos, en welke groepen hebben de macht?
-   - Waar zit de grootste spanning?
-
-5. Geef aan wat de tekst NIET zegt over gevoelens.
-   - Welke groepen komen niet aan het woord?
-   - Wiens gevoelens worden genegeerd of niet genoemd?
-   - Wat zegt dat over de tekst zelf?
-
-=== DEEL 3: JIP-EN-JANNEKE-VERTALING ===
+=== DEEL 4: JIP-EN-JANNEKE-VERTALING ===
 Vertaal de analyse naar Jip-en-Janneke-taal.
 - Maximaal 300 woorden.
 - Minimaal één metafoor of beeld.
 - Noem de belangrijkste lus en de belangrijkste terugkoppeling.
 - Leg uit wat het geheel zwak of sterk maakt.
-- Vermijd jargon: geen "emergentie", "terugkoppeling", "selectiecriterium".
-- Schrijf alsof je het aan een slimme vriend vertelt die niets van het model weet.
+- Vermijd jargon.
 
-=== DEEL 4: SPREEKWOORDEN ===
+=== DEEL 5: SPREEKWOORDEN ===
 Geef 3 tot 5 spreekwoorden, uitdrukkingen of allegorieën die van toepassing zijn.
 Voor elk spreekwoord:
 - Noem het spreekwoord.
@@ -142,38 +96,58 @@ Voor elk spreekwoord:
 - Koppel het aan een specifieke lus of verhouding.
 - Geef aan of het de situatie volledig dekt of slechts een deel.
 
-=== DEEL 5: SOCIALE-MEDIA-REACTIES ===
-Schrijf drie reacties voor sociale media, één in elke stijl:
+=== DEEL 6: UNIVERSELE VERGELIJKING ===
+Zoek naar het overheersende patroon en vergelijk het met 3 tot 5 andere domeinen:
+plantenrijk, dierenrijk, natuurkunde, kosmos, maatschappij, economie,
+technologie, menselijk lichaam, spel, verhaal.
 
-STIJL A — COMPASSIE
-- Begin met erkenning: "Wat een nare situatie..."
-- Benoem het menselijke aspect.
-- Sluit af met een warme wens of gedachte.
-- Maximaal 100 woorden.
+Voor elk domein:
+1. Noem het domein.
+2. Beschrijf het vergelijkbare patroon.
+3. Leg uit waarom het vergelijkbaar is.
+4. Geef aan waar de vergelijking NIET opgaat.
+5. Trek een conclusie: wat leert deze vergelijking ons?
 
-STIJL B — ANALYTISCH
-- Begin met: "Wat hier echt speelt is..."
-- Benoem de belangrijkste lus en de belangrijkste terugkoppeling.
-- Doorprik de oppervlakkige laag: "Ogenschijnlijk gaat het over X, maar eigenlijk..."
-- Sluit af met een prikkelende vraag.
-- Maximaal 120 woorden.
+=== DEEL 7: SOCIALE-MEDIA-REACTIES ===
+Schrijf drie reacties voor sociale media:
 
-STIJL C — MENSELIJK
-- Begin met herkenning: "Ik kan me voorstellen dat..."
-- Vertel een kort, algemeen menselijk voorbeeld.
-- Gebruik de ik-vorm.
-- Sluit af met een uitnodiging: "Hoe zou jij hiermee omgaan?"
-- Maximaal 100 woorden.
+STIJL A — COMPASSIE (max 100 woorden)
+STIJL B — ANALYTISCH (max 120 woorden)
+STIJL C — MENSELIJK (max 100 woorden)
+
+=== DEEL 8: GESTRUCTUREERDE OUTPUT VOOR GRAFIEK ===
+Geef na de tekstuele analyse een JSON-blok, tussen de markeringen
+=== JSON === en === EINDE JSON ===.
+
+{
+  "lussen": [
+    {"id": "A", "naam": "korte naam", "tijdschaal": "seconden|minuten|dagen|maanden|jaren|decennia", "omvang": 1-5, "domein": "biologisch|maatschappelijk|economisch|politiek|cultureel"}
+  ],
+  "triggers": [
+    {"naar": "A", "label": "korte beschrijving"}
+  ],
+  "terugkoppelingen": [
+    {"van": "A", "naar": "B", "sterkte": 1-5, "type": "versterkend|verzwakkend", "label": "korte beschrijving"}
+  ],
+  "krachten": [
+    {"naam": "korte naam", "op": ["A", "B"]}
+  ]
+}
+
+BELANGRIJK:
+- De lussen komen UIT DE TEKST. Verzin geen lussen die er niet zijn.
+- Gebruik alleen letters A, B, C, ... als id's.
+- "omvang" en "sterkte" zijn 1 (klein/zwak) tot 5 (groot/sterk).
+- De JSON moet geldig zijn: geen commentaar, geen trailing comma's.
 
 === BELANGRIJK ===
 - Wees precies. Verzin niets. Als iets niet in de tekst staat, zeg dat dan.
-- Sla geen enkel deel over. Elk deel moet er staan, ook als het kort is.
-- Gebruik duidelijke koppen zodat de gebruiker elk deel kan vinden.
+- Sla geen enkel deel over.
+- Gebruik duidelijke koppen.
 """
 
 # === TEKST OPSCHONEN ===
 def schoon_html(html_tekst):
-    """Verwijdert HTML-tags en rommel."""
     soup = BeautifulSoup(html_tekst, "html.parser")
     for tag in soup(["script", "style", "nav", "footer", "header", "aside",
                      "figcaption", "figure", "iframe", "form"]):
@@ -186,7 +160,6 @@ def schoon_html(html_tekst):
     return "\n\n".join(onderdelen)
 
 def schoon_platte_tekst(tekst):
-    """Verwijdert URLs, e-mails en typische rommel uit platte tekst."""
     tekst = re.sub(r'https?://\S+', '', tekst)
     tekst = re.sub(r'\S+@\S+', '', tekst)
     rommel = [
@@ -204,49 +177,151 @@ def maak_schoon(ruwe_tekst):
         return schoon_html(ruwe_tekst)
     return schoon_platte_tekst(ruwe_tekst)
 
+# === GRAFIEK TEKENEN ===
+def teken_lussen_grafiek(structuur):
+    lussen = structuur.get("lussen", [])
+    terugkoppelingen = structuur.get("terugkoppelingen", [])
+    triggers = structuur.get("triggers", [])
+
+    if not lussen:
+        return None
+
+    n = len(lussen)
+    posities = {}
+    for i, lus in enumerate(lussen):
+        hoek = 2 * math.pi * i / n
+        posities[lus["id"]] = (math.cos(hoek), math.sin(hoek))
+
+    kleur_map = {
+        "seconden": "#ef4444", "minuten": "#f97316",
+        "dagen": "#eab308", "maanden": "#22c55e",
+        "jaren": "#3b82f6", "decennia": "#8b5cf6",
+    }
+
+    fig = go.Figure()
+
+    # Terugkoppelingen
+    for tb in terugkoppelingen:
+        if tb["van"] not in posities or tb["naar"] not in posities:
+            continue
+        van = posities[tb["van"]]
+        naar = posities[tb["naar"]]
+        sterkte = tb.get("sterkte", 1)
+        kleur = "#ef4444" if tb.get("type") == "versterkend" else "#3b82f6"
+        fig.add_trace(go.Scatter(
+            x=[van[0], naar[0]], y=[van[1], naar[1]],
+            mode="lines",
+            line=dict(width=sterkte * 1.5, color=kleur),
+            hoverinfo="text", text=[tb.get("label", ""), tb.get("label", "")],
+            showlegend=False,
+        ))
+
+    # Lussen
+    for lus in lussen:
+        x, y = posities[lus["id"]]
+        kleur = kleur_map.get(lus.get("tijdschaal", "maanden"), "#94a3b8")
+        grootte = lus.get("omvang", 3) * 15
+        fig.add_trace(go.Scatter(
+            x=[x], y=[y],
+            mode="markers+text",
+            marker=dict(size=grootte, color=kleur, line=dict(width=2, color="white")),
+            text=[f"{lus['id']}: {lus['naam']}"],
+            textposition="middle center",
+            hoverinfo="text",
+            hovertext=f"{lus['naam']}<br>Tijdschaal: {lus.get('tijdschaal', '?')}",
+            showlegend=False,
+        ))
+
+    # Triggers
+    for trigger in triggers:
+        if trigger["naar"] not in posities:
+            continue
+        naar = posities[trigger["naar"]]
+        hoek = math.atan2(naar[1], naar[0])
+        x = naar[0] + 0.4 * math.cos(hoek)
+        y = naar[1] + 0.4 * math.sin(hoek)
+        fig.add_trace(go.Scatter(
+            x=[x], y=[y],
+            mode="markers+text",
+            marker=dict(size=15, color="#facc15", symbol="star"),
+            text=[trigger.get("label", "")],
+            textposition="top center",
+            hoverinfo="text", hovertext=trigger.get("label", ""),
+            showlegend=False,
+        ))
+
+    fig.update_layout(
+        title="Lussen-netwerk",
+        showlegend=False,
+        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+        plot_bgcolor="#0f172a", paper_bgcolor="#0f172a",
+        font=dict(color="white"), height=600,
+    )
+    return fig
+
 # === UI ===
 st.title("DenkKrant — Universele Analyse")
-st.markdown("Plak een tekst (artikel, verhaal, verslag) en laat de sleutel zijn werk doen.")
+st.markdown("Plak een tekst en laat de sleutel zijn werk doen.")
 
 api_key = st.secrets.get("GEMINI_API_KEY", "")
 if not api_key:
-    st.error("Geen API-sleutel gevonden. Stel GOOGLE_API_KEY in via de Secrets-instellingen.")
+    st.error("Geen API-sleutel gevonden. Stel GEMINI_API_KEY in via de Secrets.")
 
 ruwe_tekst = st.text_area("Plak hier je tekst", height=300,
                            placeholder="Plak een artikel van minimaal 800 woorden...")
 
 if st.button("Analyseer", type="primary"):
     if not api_key:
-        st.error("Vul eerst je API-sleutel in.")
+        st.error("Geen API-sleutel gevonden.")
     elif not ruwe_tekst or len(ruwe_tekst.split()) < 100:
-        st.error("De tekst is te kort. Plak een langere tekst (minimaal 800 woorden).")
+        st.error("De tekst is te kort.")
     else:
         with st.spinner("Tekst opschonen..."):
             schone_tekst = maak_schoon(ruwe_tekst)
             woord_count = len(schone_tekst.split())
             st.info(f"Opgeschoonde tekst: {woord_count} woorden")
 
-        if woord_count < 100:
-            st.error("Na opschonen blijft er te weinig tekst over. Controleer je input.")
-        else:
-            with st.spinner("AI analyseert de tekst met de sleutel..."):
+        with st.spinner("AI analyseert de tekst..."):
+            try:
+                genai.configure(api_key=api_key)
+                model = genai.GenerativeModel("gemini-3.5-flash-lite")
+                prompt = f"{SLEUTEL}\n\n--- TEKST OM TE ANALYSEREN ---\n\n{schone_tekst}"
+                response = model.generate_content(prompt)
+                volledige_tekst = response.text
+
+                # === Grafiek ===
                 try:
-                    genai.configure(api_key=api_key)
-                    model = genai.GenerativeModel("gemini-3.5-flash-lite")
-                    prompt = f"{SLEUTEL}\n\n--- TEKST OM TE ANALYSEREN ---\n\n{schone_tekst}"
-                    response = model.generate_content(prompt)
-
-                    st.success("Analyse voltooid")
-                    st.markdown("---")
-                    st.markdown("### Analyse")
-                    st.markdown(response.text)
-
-                    with st.expander("Opgeschoonde tekst bekijken"):
-                        st.text(schone_tekst)
-
+                    start = volledige_tekst.find("=== JSON ===") + len("=== JSON ===")
+                    einde = volledige_tekst.find("=== EINDE JSON ===")
+                    if start > 0 and einde > start:
+                        json_tekst = volledige_tekst[start:einde].strip()
+                        structuur = json.loads(json_tekst)
+                        fig = teken_lussen_grafiek(structuur)
+                        if fig:
+                            st.markdown("### Lussen-netwerk")
+                            st.plotly_chart(fig, use_container_width=True)
                 except Exception as e:
-                    st.error(f"Fout bij AI-aanroep: {e}")
-                    st.info("Controleer je API-sleutel en of je internetverbinding werkt.")
+                    st.warning(f"Kon de grafiek niet tekenen: {e}")
+
+                # === Tekstuele analyse ===
+                st.success("Analyse voltooid")
+                st.markdown("---")
+                st.markdown("### Analyse")
+
+                # Verwijder het JSON-blok uit de getoonde tekst
+                tekst_zonder_json = volledige_tekst
+                if start > 0 and einde > start:
+                    tekst_zonder_json = (volledige_tekst[:start - len("=== JSON ===")] +
+                                          volledige_tekst[einde + len("=== EINDE JSON ==="):])
+                st.markdown(tekst_zonder_json)
+
+                with st.expander("Opgeschoonde tekst bekijken"):
+                    st.text(schone_tekst)
+
+            except Exception as e:
+                st.error(f"Fout bij AI-aanroep: {e}")
+                st.info("Controleer je API-sleutel en of je internetverbinding werkt.")
 
 st.markdown("---")
-st.caption("DenkKrant — universele sleutel prototype v0.1")
+st.caption("DenkKrant — universele sleutel prototype v0.2")
