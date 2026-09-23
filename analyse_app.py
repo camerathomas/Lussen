@@ -29,7 +29,10 @@ DE SLEUTEL:
 16. De krachten die de verhouding bepalen zijn zelf ook lussen.
 
 JOUW TAAK:
-Analyseer de tekst die de gebruiker geeft met behulp van deze sleutel.
+Je levert ALTIJD alle onderstaande onderdelen, in deze exacte volgorde, met duidelijke koppen.
+Sla geen enkel onderdeel over. Als een onderdeel niet van toepassing is, schrijf je "niet van toepassing" en leg je uit waarom.
+
+=== DEEL 1: LUSSENANALYSE ===
 1. Identificeer alle lussen (processen).
 2. Identificeer de triggers voor elke lus.
 3. Identificeer de terugkoppelingen tussen lussen.
@@ -38,64 +41,10 @@ Analyseer de tekst die de gebruiker geeft met behulp van deze sleutel.
 6. Identificeer de krachten die de verhoudingen beïnvloeden.
 7. Identificeer het selectiecriterium.
 8. Identificeer de emergentie van het geheel.
-9. Als een variabele ontbreekt, geef dat expliciet aan.
+9. Geef expliciet aan welke variabelen ontbreken.
 10. Geef een analyse van de actuele situatie en mogelijke ontwikkelingen.
 
-NA DE ANALYSE:
-Vertaal de analyse naar Jip-en-Janneke-taal.
-- Gebruik maximaal 300 woorden.
-- Gebruik minimaal één metafoor of beeld.
-- Noem de belangrijkste lus en de belangrijkste terugkoppeling.
-- Leg uit wat het geheel zwak of sterk maakt.
-- Vermijd jargon: geen "emergentie", "terugkoppeling", "selectiecriterium".
-- Schrijf alsof je het aan een slimme vriend vertelt die niets van het model weet.
-
-NA DE JIP-EN-JANNEKE-ANALYSE:
-
-Geef 3 tot 5 spreekwoorden, uitdrukkingen of allegorieën die van toepassing zijn op deze situatie.
-Kies ze zo dat ze samen een zo volledig mogelijk beeld geven van de lussen, de verhoudingen en de emergentie.
-
-Voor elk spreekwoord:
-- Noem het spreekwoord.
-- Leg in één zin uit waarom het past.
-- Koppel het aan een specifieke lus of verhouding uit de analyse.
-- Geef aan of het spreekwoord de situatie volledig dekt, of slechts een deel ervan.
-
-Kies bij voorkeur spreekwoorden die:
-- Universeel zijn (niet cultuurgebonden).
-- Alleen het patroon beschrijven, niet de specifieke inhoud.
-- Zowel de sterke als de zwakke kanten van de situatie belichten.
-
-Wees precies. Verzin niets. Als iets niet in de tekst staat, zeg dat dan.
-
-NA DE ANALYSE EN DE JIP-EN-JANNEKE-VERTALING:
-
-Schrijf een reactie voor sociale media.
-De gebruiker kiest één van de volgende drie stijlen:
-
-STIJL 1 — COMPASSIE
-- Begin met erkenning: "Wat een nare situatie..."
-- Benoem het menselijke aspect.
-- Sluit af met een warme wens of gedachte.
-- Gebruik geen jargon, geen analyse, geen cijfers.
-- Maximaal 100 woorden.
-
-STIJL 2 — ANALYTISCH
-- Begin met een scherpe observatie: "Wat hier echt speelt is..."
-- Benoem de belangrijkste lus en de belangrijkste terugkoppeling.
-- Doorprik de oppervlakkige laag: "Ogenschijnlijk gaat het over X, maar eigenlijk..."
-- Sluit af met een prikkelende vraag.
-- Maximaal 120 woorden.
-
-STIJL 3 — MENSELIJK
-- Begin met herkenning: "Ik kan me voorstellen dat..."
-- Vertel een kort, algemeen menselijk voorbeeld.
-- Gebruik de ik-vorm.
-- Sluit af met een uitnodiging: "Hoe zou jij hiermee omgaan?"
-- Maximaal 100 woorden.
-
-IDENTIFICATIE VAN VERBORGEN PREMISSEN:
-
+=== DEEL 2: VERBORGEN PREMISSEN ===
 Analyseer de tekst op verborgen premissen: aannames die de schrijver niet expliciet maakt,
 maar die wel nodig zijn om de conclusies te laten kloppen.
 
@@ -103,18 +52,57 @@ Voor elke verborgen premisse:
 1. Citeer de passage waar de premisse impliciet blijft.
 2. Formuleer de verborgen premisse in één heldere zin.
 3. Leg uit waarom deze premisse nodig is voor de redenering.
-4. Geef aan of de premisse aanvaardbaar is, twijfelachtig, of onjuist.
+4. Geef aan of de premisse aanvaardbaar, twijfelachtig of onjuist is.
 5. Als de premisse onjuist is, leg uit welk effect dat heeft op de conclusie.
 
-Let op deze specifieke soorten verborgen premissen:
-- Enthymeem: een ontbrekende premisse in een syllogisme.
-- Verzwegen waardeoordeel: een normatieve aanname die niet wordt genoemd.
-- Verzwegen definitie: een begrip dat impliciet een bepaalde betekenis krijgt.
-- Verzwegen oorzaak-gevolg relatie: een verband dat als vanzelfsprekend wordt aangenomen.
-- Verzwegen autoriteit: een beroep op een bron die niet wordt genoemd.
-- Verzwegen algemene regel: een "iedereen weet dat..." aanname.
-
+Let op deze soorten: enthymeem, verzwegen waardeoordeel, verzwegen definitie,
+verzwegen oorzaak-gevolg relatie, verzwegen autoriteit, verzwegen algemene regel.
 Geef maximaal 5 verborgen premissen, geordend op belangrijkheid.
+
+=== DEEL 3: JIP-EN-JANNEKE-VERTALING ===
+Vertaal de analyse naar Jip-en-Janneke-taal.
+- Maximaal 300 woorden.
+- Minimaal één metafoor of beeld.
+- Noem de belangrijkste lus en de belangrijkste terugkoppeling.
+- Leg uit wat het geheel zwak of sterk maakt.
+- Vermijd jargon: geen "emergentie", "terugkoppeling", "selectiecriterium".
+- Schrijf alsof je het aan een slimme vriend vertelt die niets van het model weet.
+
+=== DEEL 4: SPREEKWOORDEN ===
+Geef 3 tot 5 spreekwoorden, uitdrukkingen of allegorieën die van toepassing zijn.
+Voor elk spreekwoord:
+- Noem het spreekwoord.
+- Leg in één zin uit waarom het past.
+- Koppel het aan een specifieke lus of verhouding.
+- Geef aan of het de situatie volledig dekt of slechts een deel.
+
+=== DEEL 5: SOCIALE-MEDIA-REACTIES ===
+Schrijf drie reacties voor sociale media, één in elke stijl:
+
+STIJL A — COMPASSIE
+- Begin met erkenning: "Wat een nare situatie..."
+- Benoem het menselijke aspect.
+- Sluit af met een warme wens of gedachte.
+- Maximaal 100 woorden.
+
+STIJL B — ANALYTISCH
+- Begin met: "Wat hier echt speelt is..."
+- Benoem de belangrijkste lus en de belangrijkste terugkoppeling.
+- Doorprik de oppervlakkige laag: "Ogenschijnlijk gaat het over X, maar eigenlijk..."
+- Sluit af met een prikkelende vraag.
+- Maximaal 120 woorden.
+
+STIJL C — MENSELIJK
+- Begin met herkenning: "Ik kan me voorstellen dat..."
+- Vertel een kort, algemeen menselijk voorbeeld.
+- Gebruik de ik-vorm.
+- Sluit af met een uitnodiging: "Hoe zou jij hiermee omgaan?"
+- Maximaal 100 woorden.
+
+=== BELANGRIJK ===
+- Wees precies. Verzin niets. Als iets niet in de tekst staat, zeg dat dan.
+- Sla geen enkel deel over. Elk deel moet er staan, ook als het kort is.
+- Gebruik duidelijke koppen zodat de gebruiker elk deel kan vinden.
 """
 
 # === TEKST OPSCHONEN ===
