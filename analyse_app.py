@@ -41,6 +41,15 @@ Analyseer de tekst die de gebruiker geeft met behulp van deze sleutel.
 9. Als een variabele ontbreekt, geef dat expliciet aan.
 10. Geef een analyse van de actuele situatie en mogelijke ontwikkelingen.
 
+NA DE ANALYSE:
+Vertaal de analyse naar Jip-en-Janneke-taal.
+- Gebruik maximaal 300 woorden.
+- Gebruik minimaal één metafoor of beeld.
+- Noem de belangrijkste lus en de belangrijkste terugkoppeling.
+- Leg uit wat het geheel zwak of sterk maakt.
+- Vermijd jargon: geen "emergentie", "terugkoppeling", "selectiecriterium".
+- Schrijf alsof je het aan een slimme vriend vertelt die niets van het model weet.
+
 Wees precies. Verzin niets. Als iets niet in de tekst staat, zeg dat dan.
 """
 
