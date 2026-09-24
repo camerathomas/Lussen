@@ -3,12 +3,49 @@ import re
 import json
 import math
 from bs4 import BeautifulSoup
-import google.generativeai as genai
 import plotly.graph_objects as go
 import networkx as nx
+from google import genai
 
 # === INSTELLINGEN ===
 st.set_page_config(page_title="DenkKrant Analyse", layout="wide")
+
+# === MODELLEN (met fallback) ===
+MODELLEN = [
+    "gemini-3.5-flash-lite",
+    "gemini-2.5-flash",
+]
+
+
+def haal_tekst_uit_interaction(interaction):
+    """Probeer eerst het gemaksattribuut, anders zelf de stappen doorlopen."""
+    tekst = getattr(interaction, "output_text", None)
+    if tekst:
+        return tekst
+    tekst = ""
+    for step in getattr(interaction, "steps", []):
+        if getattr(step, "type", None) == "model_output":
+            for block in getattr(step, "content", []):
+                if getattr(block, "type", None) == "text":
+                    tekst += block.text
+    return tekst
+
+
+def vraag_ai(client, prompt, modellen=MODELLEN):
+    """Probeer modellen één voor één tot er één werkt."""
+    laatste_fout = None
+    for modelnaam in modellen:
+        try:
+            interaction = client.interactions.create(
+                model=modelnaam,
+                input=prompt,
+            )
+            return haal_tekst_uit_interaction(interaction), modelnaam
+        except Exception as e:
+            laatste_fout = e
+            continue
+    raise laatste_fout
+
 
 # === DE SLEUTEL ===
 SLEUTEL = """
@@ -147,6 +184,7 @@ BELANGRIJK:
 - Gebruik duidelijke koppen.
 """
 
+
 # === TOEKOMST-SLEUTEL ===
 TOEKOMST_SLEUTEL = """
 Je bent een toekomstanalysemachine die werkt met de universele lussen-sleutel.
@@ -201,6 +239,9 @@ Sluit af met een JSON-blok tussen === JSON === en === EINDE JSON ===:
 De JSON moet geldig zijn: geen commentaar, geen trailing comma's.
 Sla geen enkel onderdeel over.
 """
+
+
+# === ALGEMENE HANDELINGSANALYSE ===
 ALGEMEEN_SLEUTEL = """
 Je bent een filosofisch analist die werkt met de universele lussen-sleutel.
 
@@ -248,6 +289,9 @@ BELANGRIJK:
 - Geen vage taal ("wees flexibel"). Wees concreet waar het kan.
 - Maximaal 500 woorden.
 """
+
+
+# === VRAGEN VOORSTELLEN ===
 VRAGEN_SLEUTEL = """
 Je bent een filosofisch gespreksleider die werkt met de universele lussen-sleutel.
 
@@ -308,6 +352,9 @@ Sluit af met een JSON-blok tussen === JSON === en === EINDE JSON ===:
 - Bij type "ja_nee" en "tekst" is "opties" leeg of afwezig.
 - De JSON moet geldig zijn: geen commentaar, geen trailing comma's.
 """
+
+
+# === PERSOONLIJKE ANALYSE ===
 PERSOONLIJK_SLEUTEL = """
 Je bent een filosofisch analist die werkt met de universele lussen-sleutel.
 
@@ -318,7 +365,6 @@ Je krijgt zo:
 4. De algemene handelingsanalyse.
 5. De vragen die aan de gebruiker zijn gesteld.
 6. De antwoorden van de gebruiker.
-7. Eventuele tussenvragen en de antwoorden daarop.
 
 JOUW TAAK:
 Geef een PERSOONLIJKE handelingsanalyse voor deze specifieke gebruiker.
@@ -363,6 +409,7 @@ BELANGRIJK:
 - Maximaal 600 woorden.
 """
 
+
 # === TEKST OPSCHONEN ===
 def schoon_html(html_tekst):
     soup = BeautifulSoup(html_tekst, "html.parser")
@@ -397,7 +444,7 @@ def maak_schoon(ruwe_tekst):
     return schoon_platte_tekst(ruwe_tekst)
 
 
-# === LUSSEN-GRAFIEK (bestaand) ===
+# === LUSSEN-GRAFIEK ===
 def teken_lussen_grafiek(structuur):
     lussen = structuur.get("lussen", [])
     terugkoppelingen = structuur.get("terugkoppelingen", [])
@@ -492,7 +539,7 @@ def teken_lussen_grafiek(structuur):
     return fig
 
 
-# === SCENARIO-GRAFIEK (nieuw) ===
+# === SCENARIO-GRAFIEK ===
 def teken_scenario_grafiek(structuur, scenario):
     lussen = {l["id"]: l for l in structuur.get("lussen", [])}
     terugkoppelingen = structuur.get("terugkoppelingen", [])
@@ -605,18 +652,21 @@ if not api_key:
     st.error("Geen API-sleutel gevonden. Stel GEMINI_API_KEY in via de Secrets.")
 
 # State initialiseren
-if "analyse_klaar" not in st.session_state:
-    st.session_state.analyse_klaar = False
-if "volledige_tekst" not in st.session_state:
-    st.session_state.volledige_tekst = ""
-if "structuur" not in st.session_state:
-    st.session_state.structuur = None
-if "schone_tekst" not in st.session_state:
-    st.session_state.schone_tekst = ""
-if "toekomst_tekst" not in st.session_state:
-    st.session_state.toekomst_tekst = ""
-if "toekomst_structuur" not in st.session_state:
-    st.session_state.toekomst_structuur = None
+for sleutel_naam, begin_waarde in [
+    ("analyse_klaar", False),
+    ("volledige_tekst", ""),
+    ("structuur", None),
+    ("schone_tekst", ""),
+    ("toekomst_tekst", ""),
+    ("toekomst_structuur", None),
+    ("algemeen_tekst", ""),
+    ("vragen_data", None),
+    ("antwoorden", {}),
+    ("tussen_antwoorden", {}),
+    ("persoonlijk_tekst", ""),
+]:
+    if sleutel_naam not in st.session_state:
+        st.session_state[sleutel_naam] = begin_waarde
 
 ruwe_tekst = st.text_area(
     "Plak hier je tekst",
@@ -638,11 +688,10 @@ if st.button("Analyseer", type="primary"):
 
         with st.spinner("AI analyseert de tekst..."):
             try:
-                genai.configure(api_key=api_key)
-                model = genai.GenerativeModel("gemini-3.5-flash-lite")
+                client = genai.Client(api_key=api_key)
                 prompt = f"{SLEUTEL}\n\n--- TEKST OM TE ANALYSEREN ---\n\n{schone_tekst}"
-                response = model.generate_content(prompt)
-                volledige_tekst = response.text
+                volledige_tekst, model_gebruikt = vraag_ai(client, prompt)
+                st.caption(f"Analyse gegenereerd met {model_gebruikt}")
 
                 structuur = None
                 start = volledige_tekst.find("=== JSON ===") + len("=== JSON ===")
@@ -658,18 +707,26 @@ if st.button("Analyseer", type="primary"):
                 st.session_state.structuur = structuur
                 st.session_state.schone_tekst = schone_tekst
                 st.session_state.analyse_klaar = True
+                # Reset lagere lagen
                 st.session_state.toekomst_tekst = ""
                 st.session_state.toekomst_structuur = None
+                st.session_state.algemeen_tekst = ""
+                st.session_state.vragen_data = None
+                st.session_state.antwoorden = {}
+                st.session_state.tussen_antwoorden = {}
+                st.session_state.persoonlijk_tekst = ""
 
             except Exception as e:
                 st.error(f"Fout bij AI-aanroep: {e}")
                 st.info("Controleer je API-sleutel en of je internetverbinding werkt.")
 
-# === TOON ANALYSE ===
+
+# === VANAF HIER: ALLES BINNEN analyse_klaar ===
 if st.session_state.analyse_klaar:
     volledige_tekst = st.session_state.volledige_tekst
     structuur = st.session_state.structuur
 
+    # Grafiek 1
     if structuur:
         try:
             fig = teken_lussen_grafiek(structuur)
@@ -679,6 +736,7 @@ if st.session_state.analyse_klaar:
         except Exception as e:
             st.warning(f"Kon de grafiek niet tekenen: {e}")
 
+    # Tekstuele analyse
     st.success("Analyse voltooid")
     st.markdown("---")
     st.markdown("### Analyse")
@@ -694,86 +752,4 @@ if st.session_state.analyse_klaar:
     st.markdown(tekst_zonder_json)
 
     with st.expander("Opgeschoonde tekst bekijken"):
-        st.text(st.session_state.schone_tekst)
-
-    # === KNOP 2: TOEKOMSTANALYSE ===
-    st.markdown("---")
-    st.markdown("### Toekomstanalyse")
-    st.caption("Laat de lussen-interactie doorwerken in mogelijke scenario's.")
-
-    if st.button("Toekomstanalyse", type="secondary"):
-        if not structuur:
-            st.error("Geen structuur gevonden om op voort te bouwen.")
-        else:
-            with st.spinner("AI werkt scenario's uit..."):
-                try:
-                    genai.configure(api_key=api_key)
-                    model = genai.GenerativeModel("gemini-3.5-flash-lite")
-
-                    context = (
-                        f"--- ORIGINELE TEKST ---\n{st.session_state.schone_tekst}\n\n"
-                        f"--- EERSTE ANALYSE ---\n{st.session_state.volledige_tekst}\n\n"
-                        f"--- STRUCTUUR (JSON) ---\n"
-                        f"{json.dumps(structuur, ensure_ascii=False)}\n"
-                    )
-                    prompt = f"{TOEKOMST_SLEUTEL}\n\n{context}"
-                    response = model.generate_content(prompt)
-                    toekomst_tekst = response.text
-
-                    toekomst_structuur = None
-                    s = toekomst_tekst.find("=== JSON ===") + len("=== JSON ===")
-                    e = toekomst_tekst.find("=== EINDE JSON ===")
-                    if s > 0 and e > s:
-                        try:
-                            toekomst_structuur = json.loads(
-                                toekomst_tekst[s:e].strip()
-                            )
-                        except Exception as ex:
-                            st.warning(f"Kon scenario-JSON niet parsen: {ex}")
-
-                    st.session_state.toekomst_tekst = toekomst_tekst
-                    st.session_state.toekomst_structuur = toekomst_structuur
-
-                except Exception as e:
-                    st.error(f"Fout bij toekomstanalyse: {e}")
-
-    # === TOON TOEKOMSTANALYSE ===
-    if st.session_state.toekomst_tekst:
-        toekomst_tekst = st.session_state.toekomst_tekst
-        toekomst_structuur = st.session_state.toekomst_structuur
-
-        s = toekomst_tekst.find("=== JSON ===")
-        e = toekomst_tekst.find("=== EINDE JSON ===")
-        tekst_zonder_json = toekomst_tekst
-        if s > 0 and e > s:
-            tekst_zonder_json = (
-                toekomst_tekst[:s] +
-                toekomst_tekst[e + len("=== EINDE JSON ==="):]
-            )
-        st.markdown(tekst_zonder_json)
-
-        if toekomst_structuur and structuur:
-            scenarios = toekomst_structuur.get("scenarios", [])
-            if scenarios:
-                st.markdown("### Scenario-netwerken")
-                tabs = st.tabs([
-                    f"{sc.get('id', '?')}: {sc.get('naam', '')}"
-                    for sc in scenarios
-                ])
-                for tab, sc in zip(tabs, scenarios):
-                    with tab:
-                        st.caption(f"Conditie: {sc.get('conditie', '')}")
-                        st.caption(
-                            f"Kans: {sc.get('kans', '?')} — "
-                            f"status: {sc.get('status', '?')} — "
-                            f"tijdschaal: {sc.get('tijdschaal', '?')}"
-                        )
-                        try:
-                            fig = teken_scenario_grafiek(structuur, sc)
-                            if fig:
-                                st.plotly_chart(fig, use_container_width=True)
-                        except Exception as ex:
-                            st.warning(f"Kon scenariografiek niet tekenen: {ex}")
-
-st.markdown("---")
-st.caption("DenkKrant — universele sleutel prototype v0.3 (met toekomstanalyse)")
+        st.text(st.session_state.sch
