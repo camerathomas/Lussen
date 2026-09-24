@@ -5,6 +5,7 @@ import math
 from bs4 import BeautifulSoup
 import google.generativeai as genai
 import plotly.graph_objects as go
+import networkx as nx
 
 # === INSTELLINGEN ===
 st.set_page_config(page_title="DenkKrant Analyse", layout="wide")
@@ -173,6 +174,10 @@ de omgeving binnendringt en de bestaande verhoudingen sterk verandert.
 Noem die externe lus expliciet en leg uit welke bestaande verhoudingen
 erdoor kantelen.
 
+BELANGRIJK: Gebruik exact dezelfde lus-id's (A, B, C, ...) als in de
+aangeleverde JSON. Verzin geen nieuwe id's voor bestaande lussen.
+Externe lussen krijgen id's als X, Y, Z.
+
 Sluit af met een JSON-blok tussen === JSON === en === EINDE JSON ===:
 
 {
@@ -193,12 +198,11 @@ Sluit af met een JSON-blok tussen === JSON === en === EINDE JSON ===:
   ]
 }
 
-BELANGRIJK:
-- Gebruik alleen letters als id's voor lussen (A, B, C, ...) — sluit aan bij de eerste analyse.
-- Externe lussen krijgen id's als X, Y, Z.
-- De JSON moet geldig zijn: geen commentaar, geen trailing comma's.
-- Sla geen enkel onderdeel over.
+De JSON moet geldig zijn: geen commentaar, geen trailing comma's.
+Sla geen enkel onderdeel over.
 """
+
+
 # === TEKST OPSCHONEN ===
 def schoon_html(html_tekst):
     soup = BeautifulSoup(html_tekst, "html.parser")
@@ -211,6 +215,7 @@ def schoon_html(html_tekst):
         if tekst:
             onderdelen.append(tekst)
     return "\n\n".join(onderdelen)
+
 
 def schoon_platte_tekst(tekst):
     tekst = re.sub(r'https?://\S+', '', tekst)
@@ -225,14 +230,14 @@ def schoon_platte_tekst(tekst):
     tekst = re.sub(r'\n{3,}', '\n\n', tekst)
     return tekst.strip()
 
+
 def maak_schoon(ruwe_tekst):
     if "<" in ruwe_tekst and ">" in ruwe_tekst:
         return schoon_html(ruwe_tekst)
     return schoon_platte_tekst(ruwe_tekst)
 
-# === GRAFIEK TEKENEN ===
-import networkx as nx
 
+# === LUSSEN-GRAFIEK (bestaand) ===
 def teken_lussen_grafiek(structuur):
     lussen = structuur.get("lussen", [])
     terugkoppelingen = structuur.get("terugkoppelingen", [])
@@ -241,19 +246,15 @@ def teken_lussen_grafiek(structuur):
     if not lussen:
         return None
 
-    # === Bouw een netwerk ===
     G = nx.Graph()
     for lus in lussen:
         G.add_node(lus["id"])
-
     for tb in terugkoppelingen:
         if tb["van"] in G and tb["naar"] in G:
             G.add_edge(tb["van"], tb["naar"], weight=tb.get("sterkte", 1))
 
-    # === Krachtenlayout ===
     pos = nx.spring_layout(G, k=0.8, iterations=100, seed=42)
 
-    # === Kleuren op basis van tijdschaal ===
     kleur_map = {
         "seconden": "#ef4444", "minuten": "#f97316",
         "dagen": "#eab308", "maanden": "#22c55e",
@@ -262,7 +263,6 @@ def teken_lussen_grafiek(structuur):
 
     fig = go.Figure()
 
-    # === Teken de terugkoppelingen als pijlen ===
     for tb in terugkoppelingen:
         if tb["van"] not in pos or tb["naar"] not in pos:
             continue
@@ -271,10 +271,8 @@ def teken_lussen_grafiek(structuur):
         sterkte = tb.get("sterkte", 1)
         kleur = "#ef4444" if tb.get("type") == "versterkend" else "#3b82f6"
 
-        # Teken een pijl met een pijlpunt
         fig.add_trace(go.Scatter(
-            x=[van[0], naar[0]],
-            y=[van[1], naar[1]],
+            x=[van[0], naar[0]], y=[van[1], naar[1]],
             mode="lines",
             line=dict(width=sterkte * 1.5, color=kleur),
             hoverinfo="text",
@@ -282,7 +280,6 @@ def teken_lussen_grafiek(structuur):
             showlegend=False,
         ))
 
-    # === Teken de lussen als bollen ===
     for lus in lussen:
         if lus["id"] not in pos:
             continue
@@ -293,7 +290,8 @@ def teken_lussen_grafiek(structuur):
         fig.add_trace(go.Scatter(
             x=[x], y=[y],
             mode="markers+text",
-            marker=dict(size=grootte, color=kleur, line=dict(width=2, color="white")),
+            marker=dict(size=grootte, color=kleur,
+                        line=dict(width=2, color="white")),
             text=[f"{lus['id']}: {lus['naam']}"],
             textposition="middle center",
             hoverinfo="text",
@@ -301,7 +299,6 @@ def teken_lussen_grafiek(structuur):
             showlegend=False,
         ))
 
-    # === Teken de triggers als sterren ===
     for trigger in triggers:
         if trigger["naar"] not in pos:
             continue
@@ -321,7 +318,6 @@ def teken_lussen_grafiek(structuur):
             showlegend=False,
         ))
 
-    # === Layout ===
     fig.update_layout(
         title="Lussen-netwerk",
         showlegend=False,
@@ -335,13 +331,9 @@ def teken_lussen_grafiek(structuur):
     )
     return fig
 
-  # === SCENARIO-GRAFIEK ===
+
+# === SCENARIO-GRAFIEK (nieuw) ===
 def teken_scenario_grafiek(structuur, scenario):
-    """
-    Tekent een apart netwerk voor één scenario.
-    Bestaande lussen als bollen, externe lussen als ruiten,
-    dominante lussen opgelicht, kantelpunten met rode rand.
-    """
     lussen = {l["id"]: l for l in structuur.get("lussen", [])}
     terugkoppelingen = structuur.get("terugkoppelingen", [])
 
@@ -349,9 +341,7 @@ def teken_scenario_grafiek(structuur, scenario):
     kantelpunten = set(scenario.get("kantelpunten", []))
     externe = scenario.get("externe_lussen", [])
 
-    # Voeg externe lussen toe aan het netwerk
     alle_ids = set(lussen.keys()) | {e["id"] for e in externe}
-
     if not alle_ids:
         return None
 
@@ -361,8 +351,6 @@ def teken_scenario_grafiek(structuur, scenario):
     for tb in terugkoppelingen:
         if tb["van"] in G and tb["naar"] in G:
             G.add_edge(tb["van"], tb["naar"], weight=tb.get("sterkte", 1))
-
-    # Externe lussen als losse knopen toevoegen als ze nog niet bestaan
     for e in externe:
         if e["id"] not in G:
             G.add_node(e["id"])
@@ -377,7 +365,6 @@ def teken_scenario_grafiek(structuur, scenario):
 
     fig = go.Figure()
 
-    # Terugkoppelingen
     for tb in terugkoppelingen:
         if tb["van"] not in pos or tb["naar"] not in pos:
             continue
@@ -390,11 +377,11 @@ def teken_scenario_grafiek(structuur, scenario):
             x=[van[0], naar[0]], y=[van[1], naar[1]],
             mode="lines",
             line=dict(width=sterkte * 1.5, color=kleur),
-            hoverinfo="text", text=[tb.get("label", ""), tb.get("label", "")],
+            hoverinfo="text",
+            text=[tb.get("label", ""), tb.get("label", "")],
             showlegend=False,
         ))
 
-    # Bestaande lussen
     for lus in lussen.values():
         if lus["id"] not in pos:
             continue
@@ -402,7 +389,6 @@ def teken_scenario_grafiek(structuur, scenario):
         kleur = kleur_map.get(lus.get("tijdschaal", "maanden"), "#94a3b8")
         grootte = lus.get("omvang", 3) * 15
 
-        # Dominante lussen groter, kantelpunten met rode rand
         if lus["id"] in dominante:
             grootte *= 1.4
         rand_kleur = "#ef4444" if lus["id"] in kantelpunten else "white"
@@ -420,7 +406,6 @@ def teken_scenario_grafiek(structuur, scenario):
             showlegend=False,
         ))
 
-    # Externe lussen als ruiten
     for e in externe:
         if e["id"] not in pos:
             continue
@@ -442,70 +427,14 @@ def teken_scenario_grafiek(structuur, scenario):
         showlegend=False,
         xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
         yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        plot_bgcolor="#0f172a", paper_bgcolor="#0f172a",
-        font=dict(color="white"), height=600,
+        plot_bgcolor="#0f172a",
+        paper_bgcolor="#0f172a",
+        font=dict(color="white"),
+        height=600,
         margin=dict(l=20, r=20, t=50, b=20),
     )
     return fig
-    # Terugkoppelingen
-    for tb in terugkoppelingen:
-        if tb["van"] not in posities or tb["naar"] not in posities:
-            continue
-        van = posities[tb["van"]]
-        naar = posities[tb["naar"]]
-        sterkte = tb.get("sterkte", 1)
-        kleur = "#ef4444" if tb.get("type") == "versterkend" else "#3b82f6"
-        fig.add_trace(go.Scatter(
-            x=[van[0], naar[0]], y=[van[1], naar[1]],
-            mode="lines",
-            line=dict(width=sterkte * 1.5, color=kleur),
-            hoverinfo="text", text=[tb.get("label", ""), tb.get("label", "")],
-            showlegend=False,
-        ))
 
-    # Lussen
-    for lus in lussen:
-        x, y = posities[lus["id"]]
-        kleur = kleur_map.get(lus.get("tijdschaal", "maanden"), "#94a3b8")
-        grootte = lus.get("omvang", 3) * 15
-        fig.add_trace(go.Scatter(
-            x=[x], y=[y],
-            mode="markers+text",
-            marker=dict(size=grootte, color=kleur, line=dict(width=2, color="white")),
-            text=[f"{lus['id']}: {lus['naam']}"],
-            textposition="middle center",
-            hoverinfo="text",
-            hovertext=f"{lus['naam']}<br>Tijdschaal: {lus.get('tijdschaal', '?')}",
-            showlegend=False,
-        ))
-
-    # Triggers
-    for trigger in triggers:
-        if trigger["naar"] not in posities:
-            continue
-        naar = posities[trigger["naar"]]
-        hoek = math.atan2(naar[1], naar[0])
-        x = naar[0] + 0.4 * math.cos(hoek)
-        y = naar[1] + 0.4 * math.sin(hoek)
-        fig.add_trace(go.Scatter(
-            x=[x], y=[y],
-            mode="markers+text",
-            marker=dict(size=15, color="#facc15", symbol="star"),
-            text=[trigger.get("label", "")],
-            textposition="top center",
-            hoverinfo="text", hovertext=trigger.get("label", ""),
-            showlegend=False,
-        ))
-
-    fig.update_layout(
-        title="Lussen-netwerk",
-        showlegend=False,
-        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-        plot_bgcolor="#0f172a", paper_bgcolor="#0f172a",
-        font=dict(color="white"), height=600,
-    )
-    return fig
 
 # === UI ===
 st.title("DenkKrant — Universele Analyse")
@@ -529,8 +458,11 @@ if "toekomst_tekst" not in st.session_state:
 if "toekomst_structuur" not in st.session_state:
     st.session_state.toekomst_structuur = None
 
-ruwe_tekst = st.text_area("Plak hier je tekst", height=300,
-                           placeholder="Plak een artikel van minimaal 800 woorden...")
+ruwe_tekst = st.text_area(
+    "Plak hier je tekst",
+    height=300,
+    placeholder="Plak een artikel van minimaal 800 woorden..."
+)
 
 # === KNOP 1: ANALYSE ===
 if st.button("Analyseer", type="primary"):
@@ -547,12 +479,11 @@ if st.button("Analyseer", type="primary"):
         with st.spinner("AI analyseert de tekst..."):
             try:
                 genai.configure(api_key=api_key)
-                model = genai.GenerativeModel("gemini-3.5-flash-lite")
+                model = genai.GenerativeModel("gemini-2.5-flash-lite")
                 prompt = f"{SLEUTEL}\n\n--- TEKST OM TE ANALYSEREN ---\n\n{schone_tekst}"
                 response = model.generate_content(prompt)
                 volledige_tekst = response.text
 
-                # JSON parsen
                 structuur = None
                 start = volledige_tekst.find("=== JSON ===") + len("=== JSON ===")
                 einde = volledige_tekst.find("=== EINDE JSON ===")
@@ -563,7 +494,6 @@ if st.button("Analyseer", type="primary"):
                     except Exception as e:
                         st.warning(f"Kon JSON niet parsen: {e}")
 
-                # Bewaar in state
                 st.session_state.volledige_tekst = volledige_tekst
                 st.session_state.structuur = structuur
                 st.session_state.schone_tekst = schone_tekst
@@ -575,12 +505,11 @@ if st.button("Analyseer", type="primary"):
                 st.error(f"Fout bij AI-aanroep: {e}")
                 st.info("Controleer je API-sleutel en of je internetverbinding werkt.")
 
-# === TOON ANALYSE (indien klaar) ===
+# === TOON ANALYSE ===
 if st.session_state.analyse_klaar:
     volledige_tekst = st.session_state.volledige_tekst
     structuur = st.session_state.structuur
 
-    # Grafiek 1
     if structuur:
         try:
             fig = teken_lussen_grafiek(structuur)
@@ -590,7 +519,6 @@ if st.session_state.analyse_klaar:
         except Exception as e:
             st.warning(f"Kon de grafiek niet tekenen: {e}")
 
-    # Tekstuele analyse
     st.success("Analyse voltooid")
     st.markdown("---")
     st.markdown("### Analyse")
@@ -599,8 +527,10 @@ if st.session_state.analyse_klaar:
     einde = volledige_tekst.find("=== EINDE JSON ===")
     tekst_zonder_json = volledige_tekst
     if start > 0 and einde > start:
-        tekst_zonder_json = (volledige_tekst[:start] +
-                              volledige_tekst[einde + len("=== EINDE JSON ==="):])
+        tekst_zonder_json = (
+            volledige_tekst[:start] +
+            volledige_tekst[einde + len("=== EINDE JSON ==="):]
+        )
     st.markdown(tekst_zonder_json)
 
     with st.expander("Opgeschoonde tekst bekijken"):
@@ -618,18 +548,18 @@ if st.session_state.analyse_klaar:
             with st.spinner("AI werkt scenario's uit..."):
                 try:
                     genai.configure(api_key=api_key)
-                    model = genai.GenerativeModel("gemini-3.5-flash-lite")
+                    model = genai.GenerativeModel("gemini-2.0-flash")
 
                     context = (
                         f"--- ORIGINELE TEKST ---\n{st.session_state.schone_tekst}\n\n"
                         f"--- EERSTE ANALYSE ---\n{st.session_state.volledige_tekst}\n\n"
-                        f"--- STRUCTUUR (JSON) ---\n{json.dumps(structuur, ensure_ascii=False)}\n"
+                        f"--- STRUCTUUR (JSON) ---\n"
+                        f"{json.dumps(structuur, ensure_ascii=False)}\n"
                     )
                     prompt = f"{TOEKOMST_SLEUTEL}\n\n{context}"
                     response = model.generate_content(prompt)
                     toekomst_tekst = response.text
 
-                    # JSON parsen
                     toekomst_structuur = None
                     s = toekomst_tekst.find("=== JSON ===") + len("=== JSON ===")
                     e = toekomst_tekst.find("=== EINDE JSON ===")
@@ -652,28 +582,32 @@ if st.session_state.analyse_klaar:
         toekomst_tekst = st.session_state.toekomst_tekst
         toekomst_structuur = st.session_state.toekomst_structuur
 
-        # Tekst zonder JSON
         s = toekomst_tekst.find("=== JSON ===")
         e = toekomst_tekst.find("=== EINDE JSON ===")
         tekst_zonder_json = toekomst_tekst
         if s > 0 and e > s:
-            tekst_zonder_json = (toekomst_tekst[:s] +
-                                  toekomst_tekst[e + len("=== EINDE JSON ==="):])
+            tekst_zonder_json = (
+                toekomst_tekst[:s] +
+                toekomst_tekst[e + len("=== EINDE JSON ==="):]
+            )
         st.markdown(tekst_zonder_json)
 
-        # Grafieken per scenario
         if toekomst_structuur and structuur:
             scenarios = toekomst_structuur.get("scenarios", [])
             if scenarios:
                 st.markdown("### Scenario-netwerken")
-                tabs = st.tabs([f"{sc.get('id','?')}: {sc.get('naam','')}"
-                                for sc in scenarios])
+                tabs = st.tabs([
+                    f"{sc.get('id', '?')}: {sc.get('naam', '')}"
+                    for sc in scenarios
+                ])
                 for tab, sc in zip(tabs, scenarios):
                     with tab:
-                        st.caption(f"Conditie: {sc.get('conditie','')}")
-                        st.caption(f"Kans: {sc.get('kans','?')} — "
-                                   f"status: {sc.get('status','?')} — "
-                                   f"tijdschaal: {sc.get('tijdschaal','?')}")
+                        st.caption(f"Conditie: {sc.get('conditie', '')}")
+                        st.caption(
+                            f"Kans: {sc.get('kans', '?')} — "
+                            f"status: {sc.get('status', '?')} — "
+                            f"tijdschaal: {sc.get('tijdschaal', '?')}"
+                        )
                         try:
                             fig = teken_scenario_grafiek(structuur, sc)
                             if fig:
@@ -683,39 +617,3 @@ if st.session_state.analyse_klaar:
 
 st.markdown("---")
 st.caption("DenkKrant — universele sleutel prototype v0.3 (met toekomstanalyse)")
-
-                # === Grafiek ===
-                try:
-                    start = volledige_tekst.find("=== JSON ===") + len("=== JSON ===")
-                    einde = volledige_tekst.find("=== EINDE JSON ===")
-                    if start > 0 and einde > start:
-                        json_tekst = volledige_tekst[start:einde].strip()
-                        structuur = json.loads(json_tekst)
-                        fig = teken_lussen_grafiek(structuur)
-                        if fig:
-                            st.markdown("### Lussen-netwerk")
-                            st.plotly_chart(fig, use_container_width=True)
-                except Exception as e:
-                    st.warning(f"Kon de grafiek niet tekenen: {e}")
-
-                # === Tekstuele analyse ===
-                st.success("Analyse voltooid")
-                st.markdown("---")
-                st.markdown("### Analyse")
-
-                # Verwijder het JSON-blok uit de getoonde tekst
-                tekst_zonder_json = volledige_tekst
-                if start > 0 and einde > start:
-                    tekst_zonder_json = (volledige_tekst[:start - len("=== JSON ===")] +
-                                          volledige_tekst[einde + len("=== EINDE JSON ==="):])
-                st.markdown(tekst_zonder_json)
-
-                with st.expander("Opgeschoonde tekst bekijken"):
-                    st.text(schone_tekst)
-
-            except Exception as e:
-                st.error(f"Fout bij AI-aanroep: {e}")
-                st.info("Controleer je API-sleutel en of je internetverbinding werkt.")
-
-st.markdown("---")
-st.caption("DenkKrant — universele sleutel prototype v0.2")
