@@ -18,7 +18,6 @@ MODELLEN = [
 
 
 def haal_tekst_uit_interaction(interaction):
-    """Probeer eerst het gemaksattribuut, anders zelf de stappen doorlopen."""
     tekst = getattr(interaction, "output_text", None)
     if tekst:
         return tekst
@@ -32,7 +31,6 @@ def haal_tekst_uit_interaction(interaction):
 
 
 def vraag_ai(client, prompt, modellen=MODELLEN):
-    """Probeer modellen één voor één tot er één werkt."""
     laatste_fout = None
     for modelnaam in modellen:
         try:
@@ -674,6 +672,7 @@ ruwe_tekst = st.text_area(
     placeholder="Plak een artikel van minimaal 800 woorden..."
 )
 
+
 # === KNOP 1: ANALYSE ===
 if st.button("Analyseer", type="primary"):
     if not api_key:
@@ -707,7 +706,6 @@ if st.button("Analyseer", type="primary"):
                 st.session_state.structuur = structuur
                 st.session_state.schone_tekst = schone_tekst
                 st.session_state.analyse_klaar = True
-                # Reset lagere lagen
                 st.session_state.toekomst_tekst = ""
                 st.session_state.toekomst_structuur = None
                 st.session_state.algemeen_tekst = ""
@@ -752,4 +750,15 @@ if st.session_state.analyse_klaar:
     st.markdown(tekst_zonder_json)
 
     with st.expander("Opgeschoonde tekst bekijken"):
-        st.text(st.session_state.sch
+        st.text(st.session_state.schone_tekst)
+
+    # === KNOP 2: TOEKOMSTANALYSE ===
+    st.markdown("---")
+    st.markdown("### Toekomstanalyse")
+    st.caption("Laat de lussen-interactie doorwerken in mogelijke scenario's.")
+
+    if st.button("Toekomstanalyse", type="secondary"):
+        if not structuur:
+            st.error("Geen structuur gevonden om op voort te bouwen.")
+        else:
+            with st.spinner("AI werkt scenario's uit
