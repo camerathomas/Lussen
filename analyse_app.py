@@ -479,7 +479,7 @@ if st.button("Analyseer", type="primary"):
         with st.spinner("AI analyseert de tekst..."):
             try:
                 genai.configure(api_key=api_key)
-                model = genai.GenerativeModel("gemini-2.5-flash-lite")
+                model = genai.GenerativeModel("gemini-3.5-flash-lite")
                 prompt = f"{SLEUTEL}\n\n--- TEKST OM TE ANALYSEREN ---\n\n{schone_tekst}"
                 response = model.generate_content(prompt)
                 volledige_tekst = response.text
