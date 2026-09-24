@@ -1,6 +1,6 @@
 streamlit
 beautifulsoup4
-google-generativeai
+google-genai
 pillow
 plotly
 networkx
