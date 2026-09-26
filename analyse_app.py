@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import plotly.graph_objects as go
 import networkx as nx
 from google import genai
+from pdf_export import maak_pdf
 
 # === INSTELLINGEN ===
 st.set_page_config(page_title="DenkKrant Analyse", layout="wide")
