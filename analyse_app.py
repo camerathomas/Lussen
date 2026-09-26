@@ -449,20 +449,6 @@ BELANGRIJK:
 
 # === TEKST OPSCHONEN ===
 def maak_schoon(ruwe_tekst):
-    # Check of het ECHT HTML is: zoek naar echte tags zoals <p>, <div>, <h1>
-    html_patroon = re.compile(
-        r"<\s*(p|div|h1|h2|h3|h4|article|section|span|br|ul|ol|li)\b[^>]*>",
-        re.IGNORECASE,
-    )
-    aantal_tags = len(html_patroon.findall(ruwe_tekst))
-
-    # Pas als er meerdere echte HTML-tags zijn, behandelen we het als HTML
-    if aantal_tags >= 3:
-        return schoon_html(ruwe_tekst)
-
-    return schoon_platte_tekst(ruwe_tekst)
-
-def maak_schoon(ruwe_tekst):
     originele_lengte = len(ruwe_tekst.split())
 
     html_patroon = re.compile(
@@ -479,12 +465,6 @@ def maak_schoon(ruwe_tekst):
         return ruwe_tekst.strip()
 
     return resultaat
-
-def maak_schoon(ruwe_tekst):
-    if "<" in ruwe_tekst and ">" in ruwe_tekst:
-        return schoon_html(ruwe_tekst)
-    return schoon_platte_tekst(ruwe_tekst)
-
 
 # === LUSSEN-GRAFIEK ===
 def teken_lussen_grafiek(structuur):
