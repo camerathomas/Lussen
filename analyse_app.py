@@ -448,18 +448,19 @@ BELANGRIJK:
 """
 
 # === TEKST OPSCHONEN ===
-def schoon_html(html_tekst):
-    soup = BeautifulSoup(html_tekst, "html.parser")
-    for tag in soup(["script", "style", "nav", "footer", "header", "aside",
-                     "figcaption", "figure", "iframe", "form"]):
-        tag.decompose()
-    onderdelen = []
-    for tag in soup.find_all(["h1", "h2", "h3", "p"]):
-        tekst = tag.get_text(strip=True)
-        if tekst:
-            onderdelen.append(tekst)
-    return "\n\n".join(onderdelen)
+def maak_schoon(ruwe_tekst):
+    # Check of het ECHT HTML is: zoek naar echte tags zoals <p>, <div>, <h1>
+    html_patroon = re.compile(
+        r"<\s*(p|div|h1|h2|h3|h4|article|section|span|br|ul|ol|li)\b[^>]*>",
+        re.IGNORECASE,
+    )
+    aantal_tags = len(html_patroon.findall(ruwe_tekst))
 
+    # Pas als er meerdere echte HTML-tags zijn, behandelen we het als HTML
+    if aantal_tags >= 3:
+        return schoon_html(ruwe_tekst)
+
+    return schoon_platte_tekst(ruwe_tekst)
 
 def schoon_platte_tekst(tekst):
     tekst = re.sub(r'https?://\S+', '', tekst)
