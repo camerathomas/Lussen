@@ -406,7 +406,46 @@ BELANGRIJK:
 - Blijf dicht bij wat de gebruiker heeft geantwoord. Verzin niets bij.
 - Maximaal 600 woorden.
 """
+NARRATIEF_SLEUTEL = """
+Je bent een schrijver die filosofische analyses omzet in leesbare verhalen.
 
+Je krijgt zo:
+1. De originele tekst.
+2. De volledige lussen-analyse.
+3. De JSON met lussen, triggers en terugkoppelingen.
+
+JOUW TAAK:
+Schrijf een narratieve versie van de analyse. Geen opsomming, geen
+koppen met "deel 1, deel 2", maar een doorlopend verhaal dat de lezer
+meeneemt.
+
+STRUCTUUR:
+=== SAMENVATTING ===
+3-4 zinnen: waar gaat dit artikel over, wat is de kern.
+
+=== HET VERHAAL ===
+400-600 woorden. Vertel:
+- Welke processen (lussen) spelen er in dit artikel?
+- Wie zijn de partijen, en hoe verhouden ze zich tot elkaar?
+- Wat is de spanning, wat staat op het spel?
+- Wat is de belangrijkste terugkoppeling, en waarom?
+- Wat valt op als je kijkt naar wat WEL en NIET wordt genoemd?
+
+Schrijf alsof je het aan een geïnteresseerde vriend vertelt. Gebruik
+gewone taal. Geen jargon. Geen "de lus A verhoudt zich tot lus B" —
+dat mag later in de onderlaag. Hier gaat het om het verhaal.
+
+=== WAT DIT BETEKENT ===
+3-4 zinnen: wat kan de lezer hiermee? Wat is de relevantie?
+Niet persoonlijk ("voor jou..."), maar wel concreet.
+
+BELANGRIJK:
+- Geen "deel 1, deel 2, deel 3" — het is een verhaal, geen rapport.
+- Geen bullet points in het verhaal zelf. Doorlopende tekst.
+- Gebruik metaforen en beelden waar dat helpt.
+- Blijf dicht bij de tekst. Verzin niets bij.
+- Maximaal 700 woorden in totaal.
+"""
 
 # === TEKST OPSCHONEN ===
 def schoon_html(html_tekst):
