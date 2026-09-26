@@ -819,9 +819,6 @@ if st.session_state.analyse_klaar:
     )
     st.markdown(tekst_zonder_json)
 
-    with st.expander("Opgeschoonde tekst bekijken"):
-        st.text(st.session_state.schone_tekst)
-
     # === NARRATIEVE ANALYSE ===
     st.markdown("---")
     st.markdown("### Narratieve analyse")
