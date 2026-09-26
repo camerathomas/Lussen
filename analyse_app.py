@@ -752,7 +752,7 @@ if st.button("Analyseer", type="primary"):
                 st.session_state.antwoorden = {}
                 st.session_state.tussen_antwoorden = {}
                 st.session_state.persoonlijk_tekst = ""
-
+                st.session_state.narratief_tekst = ""
             except Exception as e:
                 st.error(f"Fout bij AI-aanroep: {e}")
                 st.info("Controleer je API-sleutel en of je internetverbinding werkt.")
