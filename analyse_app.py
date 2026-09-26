@@ -980,7 +980,37 @@ if st.session_state.analyse_klaar:
                                 st.plotly_chart(fig, use_container_width=True)
                         except Exception as ex:
                             st.warning(f"Kon scenariografiek niet tekenen: {ex}")
-            # === KNOP 4: PERSOONLIJKE ANALYSE ===
+    # === KNOP 3: ALGEMENE HANDELINGSANALYSE ===
+    st.markdown("---")
+    st.markdown("### Wat kan iemand doen?")
+    st.caption("Algemeen handelingsperspectief. Niet persoonlijk — nog niet.")
+
+    if st.button("Algemene handelingsanalyse", type="secondary"):
+        if not structuur:
+            st.error("Eerst de analyse doen.")
+        else:
+            with st.spinner("AI denkt na over handelingsrichtingen..."):
+                try:
+                    client = genai.Client(api_key=api_key)
+                    context = (
+                        f"--- ORIGINELE TEKST ---\n{st.session_state.schone_tekst}\n\n"
+                        f"--- EERSTE ANALYSE ---\n{st.session_state.volledige_tekst}\n\n"
+                        f"--- TOEKOMSTANALYSE ---\n{st.session_state.toekomst_tekst}\n"
+                    )
+                    prompt = f"{ALGEMEEN_SLEUTEL}\n\n{context}"
+                    algemeen_tekst, model_gebruikt = vraag_ai(client, prompt)
+                    st.session_state.algemeen_tekst = algemeen_tekst
+                    st.session_state.vragen_data = None
+                    st.session_state.antwoorden = {}
+                    st.session_state.tussen_antwoorden = {}
+                    st.session_state.persoonlijk_tekst = ""
+                except Exception as e:
+                    st.error(f"Fout bij algemene handelingsanalyse: {e}")
+
+    if st.session_state.algemeen_tekst:
+        st.markdown(st.session_state.algemeen_tekst)
+
+    # === KNOP 4: PERSOONLIJKE ANALYSE ===
     if st.session_state.algemeen_tekst:
         st.markdown("---")
         st.markdown("### Hoe verhoud jij je tot dit onderwerp?")
@@ -1101,5 +1131,4 @@ if st.session_state.analyse_klaar:
         if st.session_state.persoonlijk_tekst:
             st.markdown("---")
             st.markdown("### Jouw persoonlijke analyse")
-            st.markdown(st.session_state.persoonlijk_tekst)                            
-
+            st.markdown(st.session_state.persoonlijk_tekst)
