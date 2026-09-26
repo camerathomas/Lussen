@@ -701,6 +701,7 @@ for sleutel_naam, begin_waarde in [
     ("antwoorden", {}),
     ("tussen_antwoorden", {}),
     ("persoonlijk_tekst", ""),
+    ("narratief_tekst", ""),
 ]:
     if sleutel_naam not in st.session_state:
         st.session_state[sleutel_naam] = begin_waarde
