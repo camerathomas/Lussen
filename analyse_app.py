@@ -462,19 +462,23 @@ def maak_schoon(ruwe_tekst):
 
     return schoon_platte_tekst(ruwe_tekst)
 
-def schoon_platte_tekst(tekst):
-    tekst = re.sub(r'https?://\S+', '', tekst)
-    tekst = re.sub(r'\S+@\S+', '', tekst)
-    rommel = [
-        r'^Lees ook:.*$', r'^Foto:.*$', r'^Beeld:.*$',
-        r'^Deel dit artikel.*$', r'^Advertentie.*$', r'^Cookie.*$',
-        r'^Accepteer.*$', r'^\s*$',
-    ]
-    for patroon in rommel:
-        tekst = re.sub(patroon, '', tekst, flags=re.MULTILINE | re.IGNORECASE)
-    tekst = re.sub(r'\n{3,}', '\n\n', tekst)
-    return tekst.strip()
+def maak_schoon(ruwe_tekst):
+    originele_lengte = len(ruwe_tekst.split())
 
+    html_patroon = re.compile(
+        r"<\s*(p|div|h1|h2|h3|h4|article|section|span|br|ul|ol|li)\b[^>]*>",
+        re.IGNORECASE,
+    )
+    if len(html_patroon.findall(ruwe_tekst)) >= 3:
+        resultaat = schoon_html(ruwe_tekst)
+    else:
+        resultaat = schoon_platte_tekst(ruwe_tekst)
+
+    # Veiligheidscheck: als er bijna niets overblijft, gebruik de originele tekst
+    if len(resultaat.split()) < originele_lengte * 0.1:
+        return ruwe_tekst.strip()
+
+    return resultaat
 
 def maak_schoon(ruwe_tekst):
     if "<" in ruwe_tekst and ">" in ruwe_tekst:
