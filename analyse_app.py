@@ -1271,3 +1271,29 @@ if st.session_state.analyse_klaar:
             st.markdown("---")
             st.markdown("### Jouw persoonlijke analyse")
             st.markdown(st.session_state.persoonlijk_tekst)
+st.markdown("---")
+st.markdown("### Exporteer als PDF")
+
+if st.button("📄 Genereer PDF", type="primary"):
+    with st.spinner("PDF wordt opgebouwd..."):
+        try:
+            pad = maak_pdf(
+                titel="Geanalyseerd artikel",
+                bron="Bron: Wikipedia",
+                analyse_tekst=st.session_state.volledige_tekst,
+                narratief_tekst=st.session_state.narratief_tekst,
+                toekomst_tekst=st.session_state.toekomst_tekst,
+                toekomst_structuur=st.session_state.toekomst_structuur,
+                algemeen_tekst=st.session_state.algemeen_tekst,
+                persoonlijk_tekst=st.session_state.persoonlijk_tekst,
+            )
+            st.success(f"PDF gemaakt: {pad}")
+            with open(pad, "rb") as f:
+                st.download_button(
+                    label="⬇️ Download PDF",
+                    data=f,
+                    file_name=os.path.basename(pad),
+                    mime="application/pdf",
+                )
+        except Exception as e:
+            st.error(f"Fout bij PDF-generatie: {e}")
