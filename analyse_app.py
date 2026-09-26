@@ -1278,13 +1278,40 @@ st.markdown("### Exporteer als PDF")
 if st.button("📄 Genereer PDF", type="primary"):
     with st.spinner("PDF wordt opgebouwd..."):
         try:
+            # --- Grafieken exporteren als PNG ---
+            os.makedirs("pdfs", exist_ok=True)
+
+            lussen_png = None
+            if structuur:
+                fig = teken_lussen_grafiek(structuur)
+                if fig:
+                    lussen_png = "pdfs/lussen_netwerk.png"
+                    fig.write_image(lussen_png, width=900, height=700, scale=2)
+
+            scenario_pngs = {}
+            if toekomst_structuur and structuur:
+                for sc in toekomst_structuur.get("scenarios", []):
+                    fig = teken_scenario_grafiek(structuur, sc)
+                    if fig:
+                        pad = f"pdfs/scenario_{sc.get('id', 'X')}.png"
+                        fig.write_image(pad, width=900, height=600, scale=2)
+                        scenario_pngs[sc.get("id")] = pad
+
+            # --- Titel uit JSON halen ---
+            titel = None
+            if structuur and isinstance(structuur, dict):
+                titel = structuur.get("titel")
+
+            # --- PDF genereren ---
             pad = maak_pdf(
-                titel="Geanalyseerd artikel",
-                bron="Bron: Wikipedia",
+                titel=titel,
+                bron="Bron: onbekend",
                 analyse_tekst=st.session_state.volledige_tekst,
+                lussen_grafiek_pad=lussen_png,
                 narratief_tekst=st.session_state.narratief_tekst,
                 toekomst_tekst=st.session_state.toekomst_tekst,
                 toekomst_structuur=st.session_state.toekomst_structuur,
+                scenario_grafiek_paden=scenario_pngs,
                 algemeen_tekst=st.session_state.algemeen_tekst,
                 persoonlijk_tekst=st.session_state.persoonlijk_tekst,
             )
