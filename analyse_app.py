@@ -770,6 +770,9 @@ for sleutel_naam, begin_waarde in [
     ("antwoorden", {}),
     ("tussen_antwoorden", {}),
     ("persoonlijk_tekst", ""),
+    ("betrokkenheid", ""),
+    ("betrokkenheid_data", None),
+    ("vervolg_antwoorden", {}),
 ]:
     if sleutel_naam not in st.session_state:
         st.session_state[sleutel_naam] = begin_waarde
@@ -788,6 +791,9 @@ def reset_alles():
     st.session_state.antwoorden = {}
     st.session_state.tussen_antwoorden = {}
     st.session_state.persoonlijk_tekst = ""
+    st.session_state.betrokkenheid = ""
+    st.session_state.betrokkenheid_data = None
+    st.session_state.vervolg_antwoorden = {}
 
 
 # === STARTFASE: tekstinvoer ===
