@@ -1302,16 +1302,24 @@ if st.button("📄 Genereer PDF", type="primary"):
             if structuur and isinstance(structuur, dict):
                 titel = structuur.get("titel")
 
-            # --- PDF genereren ---
+if st.button("📄 Genereer PDF", type="primary"):
+    with st.spinner("PDF wordt opgebouwd..."):
+        try:
+            # --- Titel uit JSON halen ---
+            titel = None
+            if structuur and isinstance(structuur, dict):
+                titel = structuur.get("titel")
+
+            # --- PDF genereren (zonder grafieken) ---
             pad = maak_pdf(
                 titel=titel,
                 bron="Bron: onbekend",
                 analyse_tekst=st.session_state.volledige_tekst,
-                lussen_grafiek_pad=lussen_png,
+                lussen_grafiek_pad=None,
                 narratief_tekst=st.session_state.narratief_tekst,
                 toekomst_tekst=st.session_state.toekomst_tekst,
                 toekomst_structuur=st.session_state.toekomst_structuur,
-                scenario_grafiek_paden=scenario_pngs,
+                scenario_grafiek_paden={},
                 algemeen_tekst=st.session_state.algemeen_tekst,
                 persoonlijk_tekst=st.session_state.persoonlijk_tekst,
             )
