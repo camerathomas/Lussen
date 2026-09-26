@@ -397,6 +397,34 @@ Sluit af met een JSON-blok tussen === JSON === en === EINDE JSON ===:
 
 # === PERSOONLIJKE ANALYSE ===
 PERSOONLIJK_SLEUTEL = """
+=== WAT JIJ KUNT DOEN ===
+
+Bepaal eerst de categorie van betrokkenheid:
+- A: DIRECT — het onderwerp raakt de gebruiker direct (gezondheid, voeding,
+  geld, werk, wonen, wetgeving die hem aangaat). Geef concreet, uitvoerbaar
+  advies. Wees specifiek: niet "eet gezonder" maar "eet vaker een appel".
+- B: INDIRECT — het onderwerp raakt de gebruiker via een laag (vakgebied,
+  regio, sociale kring). Geef signalen om op te letten en mogelijke
+  langetermijngevolgen.
+- C: ALGEMEEN — het onderwerp raakt de gebruiker niet persoonlijk. Zeg dat
+  eerlijk. Geen geforceerd advies. Wat de gebruiker eruit kan halen is
+  begrip, niet handeling.
+
+Als de categorie C is, schrijf dan letterlijk: "Voor jou is hier geen
+directe actie mogelijk. Dit is een beschouwing." en leg uit wat de waarde
+is van het begrijpen van dit onderwerp, ook zonder directe actie.
+
+Per relevant scenario (sla scenario's over die niet relevant zijn):
+- Relevantie voor jou (1-2 zinnen)
+- Noodzaak tot voorbereiding: ja / nee / misschien — met onderbouwing
+- Concrete handelingen, opgesplitst in:
+  * Nu doen (of: niet van toepassing, met reden)
+  * Voorbereiden
+  * Monitoren
+  * Nalaten (wat je vooral NIET moet doen)
+- Vroege signalen om op te letten
+- Wat buiten jouw macht ligt (en dus losgelaten kan worden)
+
 Je bent een filosofisch analist die werkt met de universele lussen-sleutel.
 
 Je krijgt zo:
