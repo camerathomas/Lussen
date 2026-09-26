@@ -951,7 +951,6 @@ if st.session_state.analyse_klaar:
                     st.session_state.persoonlijk_tekst = ""
                 except Exception as e:
                     st.error(f"Fout bij toekomstanalyse: {e}")
-
     if st.session_state.toekomst_tekst:
         toekomst_tekst = st.session_state.toekomst_tekst
         toekomst_structuur = st.session_state.toekomst_structuur
@@ -967,25 +966,17 @@ if st.session_state.analyse_klaar:
         if toekomst_structuur and structuur:
             scenarios = toekomst_structuur.get("scenarios", [])
             if scenarios:
-                st.markdown("### Scenario-netwerken")
+                toon_scenario_overzicht(scenarios)
+
+                st.markdown("### Scenario's in detail")
                 tabs = st.tabs([
+                    f"{_status_emoji(sc.get('status'))} "
                     f"{sc.get('id', '?')}: {sc.get('naam', '')}"
                     for sc in scenarios
                 ])
                 for tab, sc in zip(tabs, scenarios):
                     with tab:
-                        st.caption(f"Conditie: {sc.get('conditie', '')}")
-                        st.caption(
-                            f"Kans: {sc.get('kans', '?')} — "
-                            f"status: {sc.get('status', '?')} — "
-                            f"tijdschaal: {sc.get('tijdschaal', '?')}"
-                        )
-                        try:
-                            fig = teken_scenario_grafiek(structuur, sc)
-                            if fig:
-                                st.plotly_chart(fig, use_container_width=True)
-                        except Exception as ex:
-                            st.warning(f"Kon scenariografiek niet tekenen: {ex}")
+                        toon_scenario_kaart(sc, structuur)
     # === KNOP 3: ALGEMENE HANDELINGSANALYSE ===
     st.markdown("---")
     st.markdown("### Wat kan iemand doen?")
