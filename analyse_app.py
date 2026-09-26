@@ -502,8 +502,6 @@ BELANGRIJK:
 - Maximaal 600 woorden.
 - Geen JSON, geen nabeschouwing.
 """
-"""
-
 
 # === TEKST OPSCHONEN ===
 def schoon_html(html_tekst):
