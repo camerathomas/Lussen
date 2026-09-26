@@ -175,11 +175,11 @@ BELANGRIJK:
 - Gebruik alleen letters A, B, C, ... als id's.
 - "omvang" en "sterkte" zijn 1 (klein/zwak) tot 5 (groot/sterk).
 - De JSON moet geldig zijn: geen commentaar, geen trailing comma's.
-
-=== BELANGRIJK ===
 - Wees precies. Verzin niets. Als iets niet in de tekst staat, zeg dat dan.
 - Sla geen enkel deel over.
 - Gebruik duidelijke koppen.
+- Na === EINDE JSON === mag er NIETS meer komen. Geen samenvatting,
+- Geen nabeschouwing, geen extra JSON. Stop direct.
 """
 
 
