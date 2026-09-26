@@ -747,7 +747,148 @@ def teken_scenario_grafiek(structuur, scenario):
     )
     return fig
 
+# === SCENARIO-LAYOUT HELPERS ===
 
+STATUS_STIJL = {
+    "gefundeerd":  {"emoji": "🟢", "label": "GEFUNDEERD",  "kleur": "#22c55e"},
+    "speculatief": {"emoji": "🟡", "label": "SPECULATIEF", "kleur": "#eab308"},
+}
+
+KANS_LABEL = {
+    "klein":    "📊 Klein",
+    "mogelijk": "📊 Mogelijk",
+    "groot":    "📊 Groot",
+}
+
+
+def _status_emoji(status):
+    return STATUS_STIJL.get((status or "").lower(), {}).get("emoji", "⚪")
+
+
+def _status_kleur(status):
+    return STATUS_STIJL.get((status or "").lower(), {}).get("kleur", "#94a3b8")
+
+
+def _status_label(status):
+    return STATUS_STIJL.get((status or "").lower(), {}).get(
+        "label", (status or "?").upper()
+    )
+
+
+def _kans_label(kans):
+    return KANS_LABEL.get((kans or "").lower(), f"📊 {kans or '?'}")
+
+
+def _kantelrichting(conditie, kantelpunten):
+    """Leid een globale richting af uit de conditietekst."""
+    tekst = (conditie or "").lower()
+    if "kantelt" in tekst or "kantelende" in tekst:
+        return "⇄ kantelend"
+    if "verzwakt" in tekst or "stort" in tekst or "krimpt" in tekst:
+        return "↘ verzwakkend"
+    if "versterkt" in tekst or "stijgt" in tekst or "groeit" in tekst:
+        return "↗ versterkend"
+    if kantelpunten:
+        return "⇄ kantelend"
+    return "—"
+
+
+def toon_scenario_overzicht(scenarios):
+    """Compacte tabel met alle scenario's in één oogopslag."""
+    st.markdown("### Overzicht in één oogopslag")
+    rijen = []
+    for sc in scenarios:
+        rijen.append({
+            "": _status_emoji(sc.get("status")),
+            "#": sc.get("id", "?"),
+            "Scenario": sc.get("naam", ""),
+            "Status": _status_label(sc.get("status")),
+            "Tijdschaal": sc.get("tijdschaal", "?"),
+            "Kansband": (sc.get("kans") or "?").capitalize(),
+            "Dominante lussen": ", ".join(sc.get("dominante_lussen", [])) or "—",
+        })
+    st.dataframe(
+        rijen,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "": st.column_config.TextColumn(width="small"),
+            "#": st.column_config.TextColumn(width="small"),
+            "Status": st.column_config.TextColumn(width="small"),
+        },
+    )
+
+
+def toon_scenario_kaart(sc, structuur):
+    """Rendert één scenario volgens de nieuwe layout."""
+    status = sc.get("status", "")
+    kleur = _status_kleur(status)
+
+    # Statuslint (gekleurde streep links)
+    st.markdown(
+        f"""
+        <div style="
+            border-left: 6px solid {kleur};
+            padding: 0.6rem 0 0.6rem 1rem;
+            margin-bottom: 0.8rem;
+            background: rgba(255,255,255,0.02);
+            border-radius: 4px;
+        ">
+            <div style="font-size: 1.05rem; font-weight: 600;">
+                {_status_emoji(status)} {sc.get('naam', '')}
+            </div>
+            <div style="opacity: 0.75; font-size: 0.85rem; margin-top: 0.2rem;">
+                {_status_label(status)} &nbsp;·&nbsp;
+                ⏳ {sc.get('tijdschaal', '?')} &nbsp;·&nbsp;
+                {_kans_label(sc.get('kans'))}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Conditie
+    if sc.get("conditie"):
+        st.markdown("**Conditie**")
+        st.markdown(sc["conditie"])
+
+    # Tabel met de overige velden
+    rijen = []
+    if sc.get("dominante_lussen"):
+        rijen.append({
+            "Veld": "Dominante lussen",
+            "Invulling": ", ".join(sc["dominante_lussen"]),
+        })
+    if sc.get("kantelpunten"):
+        rijen.append({
+            "Veld": "Kantelende / overspannen lussen",
+            "Invulling": ", ".join(sc["kantelpunten"]),
+        })
+
+    richting = _kantelrichting(sc.get("conditie", ""), sc.get("kantelpunten", []))
+    if richting != "—":
+        rijen.append({
+            "Veld": "Kantelrichting",
+            "Invulling": richting,
+        })
+
+    if sc.get("externe_lussen"):
+        ext = "; ".join(
+            f"{e.get('id', '?')} — {e.get('naam', '')}"
+            for e in sc["externe_lussen"]
+        )
+        rijen.append({"Veld": "Externe lussen", "Invulling": ext})
+
+    if rijen:
+        st.table(rijen)
+
+    # Grafiek
+    try:
+        fig = teken_scenario_grafiek(structuur, sc)
+        if fig:
+            st.plotly_chart(fig, use_container_width=True)
+    except Exception as ex:
+        st.warning(f"Kon scenariografiek niet tekenen: {ex}")
 # === UI ===
 st.title("DenkKrant — Universele Analyse")
 st.markdown("Plak een tekst en laat de sleutel zijn werk doen.")
