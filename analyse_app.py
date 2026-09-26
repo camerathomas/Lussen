@@ -166,6 +166,7 @@ Geef na de tekstuele analyse een JSON-blok, tussen de markeringen
 === JSON === en === EINDE JSON ===.
 
 {
+  "titel": "korte titel van de tekst",
   "lussen": [
     {"id": "A", "naam": "korte naam", "tijdschaal": "seconden|minuten|dagen|maanden|jaren|decennia", "omvang": 1-5, "domein": "biologisch|maatschappelijk|economisch|politiek|cultureel"}
   ],
@@ -180,20 +181,19 @@ Geef na de tekstuele analyse een JSON-blok, tussen de markeringen
   ]
 }
 
+VOOR HET VELD "titel":
+- Baseer de titel op de eerste regel of de eerste woorden van de tekst.
+- Als die geen duidelijke titel vormen, maak dan een titel in de vorm:
+  "Over [kernwoord 1] en [kernwoord 2]"
+  waarbij je twee centrale begrippen uit de tekst kiest.
+- Houd de titel kort: maximaal 10 woorden.
+
 BELANGRIJK:
 - De lussen komen UIT DE TEKST. Verzin geen lussen die er niet zijn.
 - Gebruik alleen letters A, B, C, ... als id's.
 - "omvang" en "sterkte" zijn 1 (klein/zwak) tot 5 (groot/sterk).
 - De JSON moet geldig zijn: geen commentaar, geen trailing comma's.
-
-=== BELANGRIJK ===
-- Wees precies. Verzin niets. Als iets niet in de tekst staat, zeg dat dan.
-- Sla geen enkel deel over.
-- Gebruik duidelijke koppen.
-- Na === EINDE JSON === mag er NIETS meer komen. Geen samenvatting,
-  geen nabeschouwing, geen extra JSON. Stop direct.
 """
-
 
 # === TOEKOMST-SLEUTEL ===
 TOEKOMST_SLEUTEL = """
