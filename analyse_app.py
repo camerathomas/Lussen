@@ -760,5 +760,358 @@ if not st.session_state.analyse_klaar:
 
                     structuur = None
                     start = volledige_tekst.find("=== JSON ===") + len("=== JSON ===")
-                    einde = volledige_tek
+                    einde = volledige_tekst.find("=== EINDE JSON ===")
+                    if start > 0 and einde > start:
+                        json_tekst = volledige_tekst[start:einde].strip()
+                        try:
+                            structuur = json.loads(json_tekst)
+                        except Exception as e:
+                            st.warning(f"Kon JSON niet parsen: {e}")
+
+                    st.session_state.volledige_tekst = volledige_tekst
+                    st.session_state.structuur = structuur
+                    st.session_state.schone_tekst = schone_tekst
+                    st.session_state.analyse_klaar = True
+                    st.session_state.toekomst_tekst = ""
+                    st.session_state.toekomst_structuur = None
+                    st.session_state.narratief_tekst = ""
+                    st.session_state.algemeen_tekst = ""
+                    st.session_state.vragen_data = None
+                    st.session_state.antwoorden = {}
+                    st.session_state.tussen_antwoorden = {}
+                    st.session_state.persoonlijk_tekst = ""
+                    st.rerun()
+
+                except Exception as e:
+                    st.error(f"Fout bij AI-aanroep: {e}")
+                    st.info("Controleer je API-sleutel en of je internetverbinding werkt.")
+
+
+# === RESULTAATFASE ===
+if st.session_state.analyse_klaar:
+    volledige_tekst = st.session_state.volledige_tekst
+    structuur = st.session_state.structuur
+
+    # Reset-knop
+    if st.button("Nieuwe analyse starten", type="secondary"):
+        reset_alles()
+        st.rerun()
+
+    # Grafiek 1
+    if structuur:
+        try:
+            fig = teken_lussen_grafiek(structuur)
+            if fig:
+                st.markdown("### Lussen-netwerk")
+                st.plotly_chart(fig, use_container_width=True)
+        except Exception as e:
+            st.warning(f"Kon de grafiek niet tekenen: {e}")
+
+    # Tekstuele analyse
+    st.markdown("---")
+    st.markdown("### Analyse")
+
+    tekst_zonder_json = re.sub(
+        r"={2,}\s*JSON\s*={2,}.*?={2,}\s*EINDE\s*JSON\s*={2,}",
+        "",
+        volledige_tekst,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    st.markdown(tekst_zonder_json)
+
+    with st.expander("Opgeschoonde tekst bekijken"):
+        st.text(st.session_state.schone_tekst)
+
+    # === NARRATIEVE ANALYSE ===
+    st.markdown("---")
+    st.markdown("### Narratieve analyse")
+    st.caption("Dezelfde analyse, maar als leesbaar verhaal.")
+
+    if st.button("Narratieve analyse", type="secondary"):
+        if not structuur:
+            st.error("Geen analyse gevonden om op voort te bouwen.")
+        else:
+            with st.spinner("AI schrijft het verhaal..."):
+                try:
+                    client = genai.Client(api_key=api_key)
+                    context = (
+                        f"--- ORIGINELE TEKST ---\n{st.session_state.schone_tekst}\n\n"
+                        f"--- ANALYSE ---\n{st.session_state.volledige_tekst}\n"
+                    )
+                    prompt = f"{NARRATIEF_SLEUTEL}\n\n{context}"
+                    narratief_tekst, model_gebruikt = vraag_ai(client, prompt)
+                    st.session_state.narratief_tekst = narratief_tekst
+                    st.caption(f"Narratief gegenereerd met {model_gebruikt}")
+                except Exception as e:
+                    st.error(f"Fout bij narratieve analyse: {e}")
+
+    if st.session_state.narratief_tekst:
+        st.markdown(st.session_state.narratief_tekst)
+
+    # === KNOP 2: TOEKOMSTANALYSE ===
+    st.markdown("---")
+    st.markdown("### Toekomstanalyse")
+    st.caption("Laat de lussen-interactie doorwerken in mogelijke scenario's.")
+
+    if st.button("Toekomstanalyse", type="secondary"):
+        if not structuur:
+            st.error("Geen structuur gevonden om op voort te bouwen.")
+        else:
+            with st.spinner("AI werkt scenario's uit..."):
+                try:
+                    client = genai.Client(api_key=api_key)
+                    context = (
+                        f"--- ORIGINELE TEKST ---\n{st.session_state.schone_tekst}\n\n"
+                        f"--- EERSTE ANALYSE ---\n{st.session_state.volledige_tekst}\n\n"
+                        f"--- STRUCTUUR (JSON) ---\n"
+                        f"{json.dumps(structuur, ensure_ascii=False)}\n"
+                    )
+                    prompt = f"{TOEKOMST_SLEUTEL}\n\n{context}"
+                    toekomst_tekst, model_gebruikt = vraag_ai(client, prompt)
+                    st.caption(f"Toekomstanalyse gegenereerd met {model_gebruikt}")
+
+                    toekomst_structuur = None
+                    s = toekomst_tekst.find("=== JSON ===") + len("=== JSON ===")
+                    e = toekomst_tekst.find("=== EINDE JSON ===")
+                    if s > 0 and e > s:
+                        try:
+                            toekomst_structuur = json.loads(
+                                toekomst_tekst[s:e].strip()
+                            )
+                        except Exception as ex:
+                            st.warning(f"Kon scenario-JSON niet parsen: {ex}")
+
+                    st.session_state.toekomst_tekst = toekomst_tekst
+                    st.session_state.toekomst_structuur = toekomst_structuur
+                    st.session_state.algemeen_tekst = ""
+                    st.session_state.vragen_data = None
+                    st.session_state.antwoorden = {}
+                    st.session_state.tussen_antwoorden = {}
+                    st.session_state.persoonlijk_tekst = ""
+                except Exception as e:
+                    st.error(f"Fout bij toekomstanalyse: {e}")
+
+    if st.session_state.toekomst_tekst:
+        toekomst_tekst = st.session_state.toekomst_tekst
+        toekomst_structuur = st.session_state.toekomst_structuur
+
+        tekst_zonder_json = re.sub(
+            r"={2,}\s*JSON\s*={2,}.*?={2,}\s*EINDE\s*JSON\s*={2,}",
+            "",
+            toekomst_tekst,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+        st.markdown(tekst_zonder_json)
+
+        if toekomst_structuur and structuur:
+            scenarios = toekomst_structuur.get("scenarios", [])
+            if scenarios:
+                st.markdown("### Scenario-netwerken")
+                tabs = st.tabs([
+                    f"{sc.get('id', '?')}: {sc.get('naam', '')}"
+                    for sc in scenarios
+                ])
+                for tab, sc in zip(tabs, scenarios):
+                    with tab:
+                        st.caption(f"Conditie: {sc.get('conditie', '')}")
+                        st.caption(
+                            f"Kans: {sc.get('kans', '?')} — "
+                            f"status: {sc.get('status', '?')} — "
+                            f"tijdschaal: {sc.get('tijdschaal', '?')}"
+                        )
+                        try:
+                            fig = teken_scenario_grafiek(structuur, sc)
+                            if fig:
+                                st.plotly_chart(fig, use_container_width=True)
+                        except Exception as ex:
+                            st.warning(f"Kon scenariografiek niet tekenen: {ex}")
+
+    # === KNOP 3: ALGEMENE HANDELINGSANALYSE ===
+    st.markdown("---")
+    st.markdown("### Wat kan iemand doen?")
+    st.caption("Algemeen handelingsperspectief. Niet persoonlijk — nog niet.")
+
+    if st.button("Algemene handelingsanalyse", type="secondary"):
+        if not structuur:
+            st.error("Eerst de analyse doen.")
+        else:
+            with st.spinner("AI denkt na over handelingsrichtingen..."):
+                try:
+                    client = genai.Client(api_key=api_key)
+                    context = (
+                        f"--- ORIGINELE TEKST ---\n{st.session_state.schone_tekst}\n\n"
+                        f"--- EERSTE ANALYSE ---\n{st.session_state.volledige_tekst}\n\n"
+                        f"--- TOEKOMSTANALYSE ---\n{st.session_state.toekomst_tekst}\n"
+                    )
+                    prompt = f"{ALGEMEEN_SLEUTEL}\n\n{context}"
+                    algemeen_tekst, model_gebruikt = vraag_ai(client, prompt)
+                    st.session_state.algemeen_tekst = algemeen_tekst
+                    st.session_state.vragen_data = None
+                    st.session_state.antwoorden = {}
+                    st.session_state.tussen_antwoorden = {}
+                    st.session_state.persoonlijk_tekst = ""
+                except Exception as e:
+                    st.error(f"Fout bij algemene handelingsanalyse: {e}")
+
+    if st.session_state.algemeen_tekst:
+        st.markdown(st.session_state.algemeen_tekst)
+
+    # === KNOP 4: PERSOONLIJKE ANALYSE ===
+    if st.session_state.algemeen_tekst:
+        st.markdown("---")
+        st.markdown("### Wat kan ík doen?")
+        st.caption("Persoonlijke handelingsanalyse. Eerst een paar korte vragen.")
+
+        if st.session_state.vragen_data is None:
+            if st.button("Stel mijn vragen voor", type="secondary"):
+                with st.spinner("AI formuleert vragen op basis van dit artikel..."):
+                    try:
+                        client = genai.Client(api_key=api_key)
+                        context = (
+                            f"--- ORIGINELE TEKST ---\n{st.session_state.schone_tekst}\n\n"
+                            f"--- ANALYSE ---\n{st.session_state.volledige_tekst}\n\n"
+                            f"--- TOEKOMSTANALYSE ---\n{st.session_state.toekomst_tekst}\n\n"
+                            f"--- ALGEMENE HANDELINGSANALYSE ---\n{st.session_state.algemeen_tekst}\n"
+                        )
+                        prompt = f"{VRAGEN_SLEUTEL}\n\n{context}"
+                        vragen_tekst, _ = vraag_ai(client, prompt)
+
+                        s = vragen_tekst.find("=== JSON ===") + len("=== JSON ===")
+                        e = vragen_tekst.find("=== EINDE JSON ===")
+                        if s > 0 and e > s:
+                            vragen_data = json.loads(vragen_tekst[s:e].strip())
+                            st.session_state.vragen_data = vragen_data
+                            st.session_state.antwoorden = {}
+                            st.session_state.tussen_antwoorden = {}
+                            st.session_state.persoonlijk_tekst = ""
+                            st.rerun()
+                        else:
+                            st.warning("Geen JSON gevonden in het antwoord.")
+                            st.markdown(vragen_tekst)
+                    except Exception as e:
+                        st.error(f"Fout bij vragen voorstellen: {e}")
+
+        if st.session_state.vragen_data is not None and not st.session_state.persoonlijk_tekst:
+            vragen_data = st.session_state.vragen_data
+            vragen = vragen_data.get("vragen", [])
+            tussenvragen = vragen_data.get("tussenvragen", [])
+
+            st.markdown("**Beantwoord deze vragen:**")
+
+            with st.form("persoonlijke_vragen"):
+                lokale_antwoorden = {}
+                for v in vragen:
+                    vid = v["id"]
+                    if v["type"] == "keuze":
+                        lokale_antwoorden[vid] = st.radio(
+                            v["vraag"], v.get("opties", []), key=f"v_{vid}"
+                        )
+                    elif v["type"] == "schaal":
+                        opties = v.get("opties", ["1", "2", "3", "4", "5"])
+                        lokale_antwoorden[vid] = st.select_slider(
+                            v["vraag"], options=opties, key=f"v_{vid}"
+                        )
+                    elif v["type"] == "ja_nee":
+                        lokale_antwoorden[vid] = st.radio(
+                            v["vraag"], ["ja", "nee"], key=f"v_{vid}"
+                        )
+                    else:
+                        lokale_antwoorden[vid] = st.text_area(
+                            v["vraag"], key=f"v_{vid}"
+                        )
+
+                verstuur = st.form_submit_button("Maak persoonlijke analyse")
+
+            if verstuur:
+                st.session_state.antwoorden = lokale_antwoorden
+                te_stellen = {}
+                for t in tussenvragen:
+                    trigger = str(t.get("trigger", "")).lower()
+                    if not trigger:
+                        continue
+                    for antwoord in lokale_antwoorden.values():
+                        if trigger and trigger in str(antwoord).lower():
+                            te_stellen[t["id"]] = t
+                            break
+
+                if te_stellen:
+                    st.session_state.tussen_antwoorden = te_stellen
+                    st.rerun()
+                else:
+                    with st.spinner("AI maakt persoonlijke analyse..."):
+                        try:
+                            client = genai.Client(api_key=api_key)
+                            antwoorden_tekst = "\n".join(
+                                f"- {k}: {v}" for k, v in lokale_antwoorden.items()
+                            )
+                            context = (
+                                f"--- ORIGINELE TEKST ---\n{st.session_state.schone_tekst}\n\n"
+                                f"--- ANALYSE ---\n{st.session_state.volledige_tekst}\n\n"
+                                f"--- TOEKOMSTANALYSE ---\n{st.session_state.toekomst_tekst}\n\n"
+                                f"--- ALGEMENE HANDELINGSANALYSE ---\n{st.session_state.algemeen_tekst}\n\n"
+                                f"--- VRAGEN ---\n{json.dumps(vragen_data, ensure_ascii=False)}\n\n"
+                                f"--- ANTWOORDEN ---\n{antwoorden_tekst}\n"
+                            )
+                            prompt = f"{PERSOONLIJK_SLEUTEL}\n\n{context}"
+                            persoonlijk_tekst, _ = vraag_ai(client, prompt)
+                            st.session_state.persoonlijk_tekst = persoonlijk_tekst
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Fout bij persoonlijke analyse: {e}")
+
+        if st.session_state.tussen_antwoorden and not st.session_state.persoonlijk_tekst:
+            st.markdown("**Nog twee korte vragen:**")
+            with st.form("tussen_vragen"):
+                tussen_antwoorden = {}
+                for tid, t in st.session_state.tussen_antwoorden.items():
+                    if t["type"] == "keuze":
+                        tussen_antwoorden[tid] = st.radio(
+                            t["vraag"], t.get("opties", []), key=f"t_{tid}"
+                        )
+                    elif t["type"] == "schaal":
+                        opties = t.get("opties", ["1", "2", "3", "4", "5"])
+                        tussen_antwoorden[tid] = st.select_slider(
+                            t["vraag"], options=opties, key=f"t_{tid}"
+                        )
+                    elif t["type"] == "ja_nee":
+                        tussen_antwoorden[tid] = st.radio(
+                            t["vraag"], ["ja", "nee"], key=f"t_{tid}"
+                        )
+                    else:
+                        tussen_antwoorden[tid] = st.text_area(
+                            t["vraag"], key=f"t_{tid}"
+                        )
+                tussen_verstuur = st.form_submit_button("Verder")
+
+            if tussen_verstuur:
+                st.session_state.antwoorden.update(tussen_antwoorden)
+                with st.spinner("AI maakt persoonlijke analyse..."):
+                    try:
+                        client = genai.Client(api_key=api_key)
+                        antwoorden_tekst = "\n".join(
+                            f"- {k}: {v}" for k, v in st.session_state.antwoorden.items()
+                        )
+                        context = (
+                            f"--- ORIGINELE TEKST ---\n{st.session_state.schone_tekst}\n\n"
+                            f"--- ANALYSE ---\n{st.session_state.volledige_tekst}\n\n"
+                            f"--- TOEKOMSTANALYSE ---\n{st.session_state.toekomst_tekst}\n\n"
+                            f"--- ALGEMENE HANDELINGSANALYSE ---\n{st.session_state.algemeen_tekst}\n\n"
+                            f"--- VRAGEN ---\n{json.dumps(st.session_state.vragen_data, ensure_ascii=False)}\n\n"
+                            f"--- ANTWOORDEN ---\n{antwoorden_tekst}\n"
+                        )
+                        prompt = f"{PERSOONLIJK_SLEUTEL}\n\n{context}"
+                        persoonlijk_tekst, _ = vraag_ai(client, prompt)
+                        st.session_state.persoonlijk_tekst = persoonlijk_tekst
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Fout bij persoonlijke analyse: {e}")
+
+        if st.session_state.persoonlijk_tekst:
+            st.markdown("---")
+            st.markdown("### Jouw persoonlijke analyse")
+            st.markdown(st.session_state.persoonlijk_tekst)
+
+
+st.markdown("---")
+st.caption("DenkKrant — universele sleutel prototype v0.5")
                     
