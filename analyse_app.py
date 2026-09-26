@@ -791,7 +791,31 @@ if st.session_state.analyse_klaar:
 
     with st.expander("Opgeschoonde tekst bekijken"):
         st.text(st.session_state.schone_tekst)
+      # === NARRATIEVE ANALYSE ===
+    st.markdown("---")
+    st.markdown("### Narratieve analyse")
+    st.caption("Dezelfde analyse, maar als leesbaar verhaal.")
 
+    if st.button("Narratieve analyse", type="secondary"):
+        if not structuur:
+            st.error("Geen analyse gevonden om op voort te bouwen.")
+        else:
+            with st.spinner("AI schrijft het verhaal..."):
+                try:
+                    client = genai.Client(api_key=api_key)
+                    context = (
+                        f"--- ORIGINELE TEKST ---\n{st.session_state.schone_tekst}\n\n"
+                        f"--- ANALYSE ---\n{st.session_state.volledige_tekst}\n"
+                    )
+                    prompt = f"{NARRATIEF_SLEUTEL}\n\n{context}"
+                    narratief_tekst, model_gebruikt = vraag_ai(client, prompt)
+                    st.session_state.narratief_tekst = narratief_tekst
+                    st.caption(f"Narratief gegenereerd met {model_gebruikt}")
+                except Exception as e:
+                    st.error(f"Fout bij narratieve analyse: {e}")
+
+    if st.session_state.narratief_tekst:
+        st.markdown(st.session_state.narratief_tekst)
     # === KNOP 2: TOEKOMSTANALYSE ===
     st.markdown("---")
     st.markdown("### Toekomstanalyse")
