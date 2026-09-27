@@ -1,7 +1,7 @@
 """
-DenkKrant — PDF-export (v4)
-Met automatische titel, inhoudsopgave, ankers, grafieken
-en optionele AI-HTML-invoer.
+DenkKrant — PDF-export (v5)
+Zonder emoji's in de code; kleurcodering via CSS.
+Met emoji-filter voor AI-tekst.
 """
 
 import os
@@ -18,6 +18,35 @@ DISCLAIMER = (
     "gelaagde en in elkaar grijpende processen (lussen). Andere analyses, "
     "met andere aannames of modellen, kunnen tot andere uitkomsten komen."
 )
+
+
+# ---------- Emoji-filter ----------
+
+_EMOJI_PATROON = re.compile(
+    "["
+    "\U0001F300-\U0001F5FF"
+    "\U0001F600-\U0001F64F"
+    "\U0001F680-\U0001F6FF"
+    "\U0001F700-\U0001F77F"
+    "\U0001F780-\U0001F7FF"
+    "\U0001F800-\U0001F8FF"
+    "\U0001F900-\U0001F9FF"
+    "\U0001FA00-\U0001FA6F"
+    "\U0001FA70-\U0001FAFF"
+    "\U00002702-\U000027B0"
+    "\U000024C2-\U0001F251"
+    "\U0001F1E0-\U0001F1FF"
+    "\U00002600-\U000026FF"
+    "\U00002700-\U000027BF"
+    "]+",
+    flags=re.UNICODE,
+)
+
+
+def _verwijder_emojis(tekst):
+    if not tekst:
+        return ""
+    return _EMOJI_PATROON.sub("", tekst).strip()
 
 
 # ---------- Hulpfuncties ----------
@@ -45,9 +74,9 @@ def _status_class(status):
 def _status_label(status):
     status = (status or "").lower().strip()
     if status == "gefundeerd":
-        return "🟢 Gefundeerd"
+        return "● Gefundeerd"
     if status == "speculatief":
-        return "🟡 Speculatief"
+        return "● Speculatief"
     return _esc(status).capitalize()
 
 
@@ -161,8 +190,8 @@ def _scenario_blok(sc, grafiek_pad=None):
         <div class="status-label">{_status_label(sc.get("status"))}</div>
         <div class="scenario-naam">{naam}</div>
         <div class="scenario-meta">
-            <span>⏳ {tijdschaal}</span>
-            <span>📊 {kans}</span>
+            <span>Tijdschaal: {tijdschaal}</span>
+            <span>Kans: {kans}</span>
         </div>
     </div>
 
@@ -227,11 +256,11 @@ def maak_pdf(
 
     inhoudsopgave_html = _inhoudsopgave(hoofdstuk_defs)
 
-    # ---- Helper: kies HTML of platte tekst ----
+    # ---- Helper: kies HTML of platte tekst + emoji-filter ----
     def _kies_inhoud(plat, html):
         if html and html.strip():
-            return html
-        return _alineas(_ontdoe_json(plat))
+            return _verwijder_emojis(html)
+        return _verwijder_emojis(_alineas(_ontdoe_json(plat)))
 
     # ---- Hoofdstukken opbouwen ----
     delen = []
