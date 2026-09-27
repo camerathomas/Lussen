@@ -83,13 +83,6 @@ terugkoppelingen. Gebruik exact dit Markdown-formaat:
 | A   | ...  | ...     | ...            | ...        |
 | B   | ...  | ...     | ...            | ...        |
 
-BELANGRIJK:
-- Elke rij begint en eindigt met een pipe (|).
-- Onder de kopregel komt ALTIJD een scheidingslijn: |---|---|...
-- Gebruik geen tabs of spaties als scheiding; alleen pipes.
-- Gebruik alleen letters A, B, C, ... als id's.
-- Maximaal 6 lussen.
-
 Geef daarna een legenda:
 
 | Lus | Betekenis |
@@ -98,7 +91,7 @@ Geef daarna een legenda:
 | B   | ...       |
 | ... | ...       |
 
-Geef daarna een korte toelichting per lus (max 3 zinnen per lus).
+Geef daarna een korte toelichting in steekwoorden per lus (max 1 zin per lus).
 
 Werk daarna de volgende punten uit in doorlopende tekst:
 1. Identificeer de tijd, plaats, vorm en snelheid van elke lus.
@@ -140,12 +133,6 @@ Geef een tabel in exact dit Markdown-formaat:
 |-------|---------|---------------------|----------------|
 | ...   | ...     | ...                 | ...            |
 
-BELANGRIJK:
-- Elke rij begint en eindigt met een pipe (|).
-- Onder de kopregel komt ALTIJD een scheidingslijn: |---|---|...
-- Gebruik geen tabs of spaties als scheiding; alleen pipes.
-- Elke cel bevat precies één waarde, ook als die leeg is.
-
 Geef inhoudelijk in de tabel aan:
 - Welke gevoelens tegen elkaar worden opgewogen.
 - Welke groepen zich machteloos voelen.
@@ -160,7 +147,7 @@ Vertaal de analyse naar Jip-en-Janneke-taal.
 - Vermijd jargon.
 
 === DEEL 5: SPREEKWOORDEN ===
-Geef 3 tot 5 spreekwoorden, uitdrukkingen of allegorieën die van toepassing zijn.
+Geef 2 tot 3 spreekwoorden, uitdrukkingen of allegorieën die van toepassing zijn.
 Voor elk spreekwoord:
 - Noem het spreekwoord.
 - Leg in één zin uit waarom het past.
@@ -173,10 +160,9 @@ STRIKTE REGELS VOOR SPREEKWOORDEN:
 - Als je een buitenlands spreekwoord kent dat goed past, zoek dan een
   Nederlands spreekwoord met dezelfde strekking. Bestaat dat niet,
   zeg dat dan eerlijk en gebruik een andere formulering.
-- Verzin geen spreekwoorden die "logisch klinken" maar niet bestaan.
 
 === DEEL 6: UNIVERSELE VERGELIJKING ===
-Zoek naar het overheersende patroon en vergelijk het met 3 tot 5 andere domeinen:
+Zoek naar het overheersende patroon en vergelijk het met 1 tot 2 andere domeinen:
 plantenrijk, dierenrijk, natuurkunde, kosmos, maatschappij, economie,
 technologie, menselijk lichaam, spel, verhaal.
 
@@ -195,7 +181,7 @@ STIJL B — ANALYTISCH (max 120 woorden)
 STIJL C — MENSELIJK (max 100 woorden)
 
 === DEEL 8: GESTRUCTUREERDE OUTPUT VOOR GRAFIEK ===
-=== DEEL 8 ===
+
 Geef een JSON-blok...
 [JSON-voorbeeld]
 
