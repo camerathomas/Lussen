@@ -504,7 +504,38 @@ BELANGRIJK:
 - Maximaal 600 woorden.
 - Geen JSON, geen nabeschouwing.
 """
+# === OPMAAK-SLEUTEL ===
+OPMAAK_SLEUTEL = """
+Je bent een opmaakredacteur. Je krijgt een ruwe analysetekst en zet die om
+naar nette HTML voor een PDF.
 
+STRIKTE REGELS:
+- Behoud de tekst WOORD VOOR WOORD. Voeg niets toe, laat niets weg,
+  verander geen formuleringen.
+- Je mag alleen opmaak toevoegen, geen inhoud.
+
+WAT JE DOET:
+- Herken koppen en maak ze <h2> of <h3>. Koppen zijn vaak genummerd
+  (bijv. "1. Iets", "DEEL 1: Iets") of duidelijk een sectietitel.
+- Zet kernwoorden tussen haakjes (zoals "(Geopolitieke spanning)") in <strong>.
+- Maak lijsten met <ul> en <li>, of <ol> en <li> als ze genummerd zijn.
+- Gebruik <em> voor cursieve nadruk waar dat de leesbaarheid dient.
+- Elk blok doorlopende tekst wordt een <p>.
+- Gebruik <h2> voor hoofdsecties en <h3> voor subsecties.
+
+WAT JE NIET DOET:
+- Geen <html>, <head>, <body>, <div>, <span>, <style>, <script>.
+- Geen klassen, geen id's, geen attributen.
+- Geen CSS, geen inline styles.
+- Geen Markdown (geen **, ##, --).
+- Geen commentaar, geen uitleg, geen inleiding.
+
+TOEGESTANE TAGS:
+<h2>, <h3>, <h4>, <p>, <ul>, <ol>, <li>, <strong>, <em>, <br>
+
+Geef ALLEEN de HTML terug. Niets ervoor, niets erna. Geen tekst zoals
+"Hier is de HTML:". Gewoon direct de HTML.
+"""
 # === TEKST OPSCHONEN ===
 def schoon_html(html_tekst):
     soup = BeautifulSoup(html_tekst, "html.parser")
