@@ -110,10 +110,19 @@ Voor elke groep of persoon in de tekst:
 - Met wie identificeren zij zich?
 - Wat willen zij?
 
-Geef een tabel:
-| Groep | Positie | Mogelijke gevoelens | Wat zij willen |
+Geef een tabel in exact dit Markdown-formaat:
 
-Geef aan:
+| Groep | Positie | Mogelijke gevoelens | Wat zij willen |
+|-------|---------|---------------------|----------------|
+| ...   | ...     | ...                 | ...            |
+
+BELANGRIJK:
+- Elke rij begint en eindigt met een pipe (|).
+- Onder de kopregel komt ALTIJD een scheidingslijn: |---|---|...
+- Gebruik geen tabs of spaties als scheiding; alleen pipes.
+- Elke cel bevat precies één waarde, ook als die leeg is.
+
+Geef inhoudelijk in de tabel aan:
 - Welke gevoelens tegen elkaar worden opgewogen.
 - Welke groepen zich machteloos voelen.
 - Wiens gevoelens niet genoemd worden.
