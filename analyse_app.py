@@ -195,7 +195,18 @@ STIJL B — ANALYTISCH (max 120 woorden)
 STIJL C — MENSELIJK (max 100 woorden)
 
 === DEEL 8: GESTRUCTUREERDE OUTPUT VOOR GRAFIEK ===
-Geef na de tekstuele analyse een JSON-blok, tussen de markeringen
+=== DEEL 8 ===
+Geef een JSON-blok...
+[JSON-voorbeeld]
+
+BELANGRIJK:
+- Gebruik exact deze veldnamen: titel, lussen, triggers,
+  terugkoppelingen, krachten.
+- "id" is één letter (A, B, C).
+- "omvang" is een getal 1-5, geen woord.
+- "sterkte" is een getal 1-5, geen woord.
+- "type" is "versterkend" of "verzwakkend".
+- De JSON moet geldig zijn: geen commentaar, geen trailing comma's.
 === JSON === en === EINDE JSON ===.
 
 {
