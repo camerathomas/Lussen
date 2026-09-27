@@ -84,7 +84,7 @@ Werk daarna de volgende punten uit in doorlopende tekst, zonder steeds het woord
 7. Geef een analyse van de actuele situatie en mogelijke ontwikkelingen.
 
 Geef eerst een overzichtelijke tabel van alle lussen, hun triggers en hun
-terugkoppelingen. Gebruik exact dit Markdown-formaat:
+terugkoppelingen:
 
 | Lus | Naam | Trigger | Terugkoppeling | Tijdschaal |
 |-----|------|---------|----------------|------------|
