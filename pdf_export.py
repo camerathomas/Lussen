@@ -196,13 +196,17 @@ def maak_pdf(
     titel=None,
     bron="Bron onbekend",
     analyse_tekst,
+    analyse_html=None,
     lussen_grafiek_pad=None,
     narratief_tekst,
+    narratief_html=None,
     toekomst_tekst,
     toekomst_structuur,
     scenario_grafiek_paden=None,
     algemeen_tekst,
+    algemeen_html=None,
     persoonlijk_tekst,
+    persoonlijk_html=None,
     uitvoerpad=None,
 ):
     datum = datetime.now().strftime("%d %B %Y").lstrip("0")
@@ -212,7 +216,6 @@ def maak_pdf(
         stempel = datetime.now().strftime("%Y%m%d_%H%M%S")
         uitvoerpad = f"pdfs/denkkrant_{stempel}.pdf"
 
-    # Titel valt terug op iets algemeens als er niets is.
     if not titel or not titel.strip():
         titel = "Universele Analyse"
 
@@ -231,6 +234,88 @@ def maak_pdf(
         hoofdstuk_defs.append(("5", "Jouw positie", "h5"))
 
     inhoudsopgave_html = _inhoudsopgave(hoofdstuk_defs)
+
+    # ---- Hoofdstukken opbouwen ----
+    delen = []
+
+    def _kies_inhoud(plat, html):
+        """Gebruik HTML als die er is, anders platte tekst."""
+        if html and html.strip():
+            return html
+        return _alineas(_ontdoe_json(plat))
+
+    if analyse_tekst:
+        analyse_inhoud = _kies_inhoud(analyse_tekst, analyse_html)
+        analyse_inhoud += _grafiek_html(lussen_grafiek_pad, "Lussen-netwerk")
+        delen.append(_hoofdstuk("1", "De analyse", analyse_inhoud, "h1"))
+
+    if narratief_tekst:
+        delen.append(
+            _hoofdstuk(
+                "2", "Het verhaal",
+                _kies_inhoud(narratief_tekst, narratief_html),
+                "h2",
+            )
+        )
+
+    if toekomst_structuur and toekomst_structuur.get("scenarios"):
+        scenario_paden = scenario_grafiek_paden or {}
+        scenarios_html = ""
+        for sc in toekomst_structuur["scenarios"]:
+            pad = scenario_paden.get(sc.get("id"))
+            scenarios_html += _scenario_blok(sc, pad)
+        delen.append(
+            _hoofdstuk("3", "Toekomstscenario's", scenarios_html, "h3")
+        )
+
+    if algemeen_tekst:
+        delen.append(
+            _hoofdstuk(
+                "4", "Wat kan iemand doen?",
+                _kies_inhoud(algemeen_tekst, algemeen_html),
+                "h4",
+            )
+        )
+
+    if persoonlijk_tekst:
+        delen.append(
+            _hoofdstuk(
+                "5", "Jouw positie",
+                _kies_inhoud(persoonlijk_tekst, persoonlijk_html),
+                "h5",
+            )
+        )
+
+    body = "\n".join(delen)
+
+    html = f"""<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>DenkKrant — Universele Analyse</title>
+</head>
+<body>
+{_cover(titel, bron, datum)}
+<span id="inhoud"></span>
+{inhoudsopgave_html}
+{body}
+</body>
+</html>
+    """
+
+    hier = os.path.dirname(os.path.abspath(__file__))
+    css_pad = os.path.join(hier, "pdf_stijl.css")
+
+    if os.path.exists(css_pad):
+        stylesheets = [CSS(filename=css_pad)]
+    else:
+        stylesheets = []
+
+    HTML(string=html, base_url=hier).write_pdf(
+        uitvoerpad, stylesheets=stylesheets
+    )
+
+    return uitvoerpad
 
     # ---- Hoofdstukken opbouwen ----
     delen = []
