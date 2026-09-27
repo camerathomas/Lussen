@@ -1,6 +1,7 @@
 """
-DenkKrant — PDF-export (v3)
-Met automatische titel, inhoudsopgave, ankers en grafieken.
+DenkKrant — PDF-export (v4)
+Met automatische titel, inhoudsopgave, ankers, grafieken
+en optionele AI-HTML-invoer.
 """
 
 import os
@@ -17,14 +18,6 @@ DISCLAIMER = (
     "gelaagde en in elkaar grijpende processen (lussen). Andere analyses, "
     "met andere aannames of modellen, kunnen tot andere uitkomsten komen."
 )
-
-HOOFDSTUK_KLEUREN = {
-    "1": "h1",
-    "2": "h2",
-    "3": "h3",
-    "4": "h4",
-    "5": "h5",
-}
 
 
 # ---------- Hulpfuncties ----------
@@ -99,7 +92,6 @@ def _cover(titel, bron, datum):
 
 
 def _inhoudsopgave(hoofdstukken):
-    """hoofdstukken: lijst van (nummer, titel, anker_id)."""
     items = "".join(
         f'<li>'
         f'<a href="#{anker}">'
@@ -235,14 +227,14 @@ def maak_pdf(
 
     inhoudsopgave_html = _inhoudsopgave(hoofdstuk_defs)
 
-    # ---- Hoofdstukken opbouwen ----
-    delen = []
-
+    # ---- Helper: kies HTML of platte tekst ----
     def _kies_inhoud(plat, html):
-        """Gebruik HTML als die er is, anders platte tekst."""
         if html and html.strip():
             return html
         return _alineas(_ontdoe_json(plat))
+
+    # ---- Hoofdstukken opbouwen ----
+    delen = []
 
     if analyse_tekst:
         analyse_inhoud = _kies_inhoud(analyse_tekst, analyse_html)
@@ -316,90 +308,3 @@ def maak_pdf(
     )
 
     return uitvoerpad
-
-    # ---- Hoofdstukken opbouwen ----
-    delen = []
-
-    if analyse_tekst:
-        analyse_schoon = _ontdoe_json(analyse_tekst)
-        analyse_html = _alineas(analyse_schoon)
-        analyse_html += _grafiek_html(lussen_grafiek_pad, "Lussen-netwerk")
-        delen.append(_hoofdstuk("1", "De analyse", analyse_html, "h1"))
-
-    if narratief_tekst:
-        delen.append(
-            _hoofdstuk(
-                "2", "Het verhaal",
-                _alineas(_ontdoe_json(narratief_tekst)),
-                "h2",
-            )
-        )
-
-    if toekomst_structuur and toekomst_structuur.get("scenarios"):
-        scenario_paden = scenario_grafiek_paden or {}
-        scenarios_html = ""
-        for sc in toekomst_structuur["scenarios"]:
-            pad = scenario_paden.get(sc.get("id"))
-            scenarios_html += _scenario_blok(sc, pad)
-        delen.append(
-            _hoofdstuk("3", "Toekomstscenario's", scenarios_html, "h3")
-        )
-
-    if algemeen_tekst:
-        delen.append(
-            _hoofdstuk(
-                "4", "Wat kan iemand doen?",
-                _alineas(algemeen_tekst),
-                "h4",
-            )
-        )
-
-    if persoonlijk_tekst:
-        delen.append(
-            _hoofdstuk(
-                "5", "Jouw positie",
-                _alineas(persoonlijk_tekst),
-                "h5",
-            )
-        )
-
-    body = "\n".join(delen)
-
-    html = f"""<!DOCTYPE html>
-<html lang="nl">
-<head>
-<meta charset="utf-8">
-<title>DenkKrant — Universele Analyse</title>
-</head>
-<body>
-{_cover(titel, bron, datum)}
-<span id="inhoud"></span>
-{inhoudsopgave_html}
-{body}
-</body>
-</html>
-    """
-
-    # ---- CSS laden ----
-    hier = os.path.dirname(os.path.abspath(__file__))
-    css_pad = os.path.join(hier, "pdf_stijl.css")
-
-    if os.path.exists(css_pad):
-        stylesheets = [CSS(filename=css_pad)]
-    else:
-        stylesheets = []
-
-    HTML(string=html, base_url=hier).write_pdf(
-        uitvoerpad, stylesheets=stylesheets
-    )
-
-    return uitvoerpad
-
-def maak_pdf(
-    *,
-    titel=None,
-    bron="Bron onbekend",
-    analyse_tekst,
-    analyse_html=None,
-    lussen_grafiek_pad=None,
-    ...
