@@ -74,16 +74,40 @@ Je levert ALTIJD alle onderstaande onderdelen, in deze exacte volgorde, met duid
 Sla geen enkel onderdeel over. Als een onderdeel niet van toepassing is, schrijf je "niet van toepassing" en leg je uit waarom.
 
 === DEEL 1: LUSSENANALYSE ===
-1. Identificeer alle lussen (processen).
-2. Identificeer de triggers voor elke lus.
-3. Identificeer de terugkoppelingen tussen lussen.
-4. Identificeer de tijd, plaats, vorm en snelheid van elke lus.
-5. Identificeer de verhoudingen tussen lussen.
-6. Identificeer de krachten die de verhoudingen beïnvloeden.
-7. Identificeer het selectiecriterium.
-8. Identificeer de emergentie van het geheel.
-9. Geef expliciet aan welke variabelen ontbreken.
-10. Geef een analyse van de actuele situatie en mogelijke ontwikkelingen.
+
+Geef eerst een overzichtelijke tabel van alle lussen, hun triggers en hun
+terugkoppelingen. Gebruik exact dit Markdown-formaat:
+
+| Lus | Naam | Trigger | Terugkoppeling | Tijdschaal |
+|-----|------|---------|----------------|------------|
+| A   | ...  | ...     | ...            | ...        |
+| B   | ...  | ...     | ...            | ...        |
+
+BELANGRIJK:
+- Elke rij begint en eindigt met een pipe (|).
+- Onder de kopregel komt ALTIJD een scheidingslijn: |---|---|...
+- Gebruik geen tabs of spaties als scheiding; alleen pipes.
+- Gebruik alleen letters A, B, C, ... als id's.
+- Maximaal 6 lussen.
+
+Geef daarna een legenda:
+
+| Lus | Betekenis |
+|-----|-----------|
+| A   | ...       |
+| B   | ...       |
+| ... | ...       |
+
+Geef daarna een korte toelichting per lus (max 3 zinnen per lus).
+
+Werk daarna de volgende punten uit in doorlopende tekst:
+1. Identificeer de tijd, plaats, vorm en snelheid van elke lus.
+2. Identificeer de verhoudingen tussen lussen.
+3. Identificeer de krachten die de verhoudingen beïnvloeden.
+4. Identificeer het selectiecriterium.
+5. Identificeer de emergentie van het geheel.
+6. Geef expliciet aan welke variabelen ontbreken.
+7. Geef een analyse van de actuele situatie en mogelijke ontwikkelingen.
 
 === DEEL 2: VERBORGEN PREMISSEN ===
 Analyseer de tekst op verborgen premissen: aannames die de schrijver niet expliciet maakt,
