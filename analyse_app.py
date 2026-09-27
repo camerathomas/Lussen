@@ -74,6 +74,14 @@ Je levert ALTIJD alle onderstaande onderdelen, in deze exacte volgorde, met duid
 Sla geen enkel onderdeel over. Als een onderdeel niet van toepassing is, schrijf je "niet van toepassing" en leg je uit waarom.
 
 === DEEL 1: LUSSENANALYSE ===
+Werk daarna de volgende punten uit in doorlopende tekst, zonder steeds het woord identificeer te gebruiken:
+1. Identificeer de tijd, plaats, vorm en snelheid van elke lus.
+2. Identificeer de verhoudingen tussen lussen.
+3. Identificeer de krachten die de verhoudingen beïnvloeden.
+4. Identificeer het selectiecriterium.
+5. Identificeer de emergentie van het geheel.
+6. Geef expliciet aan welke variabelen ontbreken.
+7. Geef een analyse van de actuele situatie en mogelijke ontwikkelingen.
 
 Geef eerst een overzichtelijke tabel van alle lussen, hun triggers en hun
 terugkoppelingen. Gebruik exact dit Markdown-formaat:
@@ -92,15 +100,6 @@ Geef daarna een legenda:
 | ... | ...       |
 
 Geef daarna een korte toelichting in steekwoorden per lus (max 1 zin per lus).
-
-Werk daarna de volgende punten uit in doorlopende tekst:
-1. Identificeer de tijd, plaats, vorm en snelheid van elke lus.
-2. Identificeer de verhoudingen tussen lussen.
-3. Identificeer de krachten die de verhoudingen beïnvloeden.
-4. Identificeer het selectiecriterium.
-5. Identificeer de emergentie van het geheel.
-6. Geef expliciet aan welke variabelen ontbreken.
-7. Geef een analyse van de actuele situatie en mogelijke ontwikkelingen.
 
 === DEEL 2: VERBORGEN PREMISSEN ===
 Analyseer de tekst op verborgen premissen: aannames die de schrijver niet expliciet maakt,
