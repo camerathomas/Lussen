@@ -448,3 +448,55 @@ li {
     padding-top: 0.4cm;
     margin-top: 1cm;
 }
+
+/* ---------- AI-opmaak: extra stijlen ---------- */
+
+.sectie h2 {
+    font-family: "Inter", "Source Sans Pro", sans-serif;
+    font-weight: 800;
+    font-size: 16pt;
+    color: #000000;
+    margin: 1.4cm 0 0.5cm 0;
+    line-height: 1.25;
+}
+
+.sectie h3 {
+    font-family: "Inter", "Source Sans Pro", sans-serif;
+    font-weight: 700;
+    font-size: 13.5pt;
+    color: #000000;
+    margin: 1.1cm 0 0.4cm 0;
+    line-height: 1.3;
+}
+
+.sectie h4 {
+    font-family: "Inter", "Source Sans Pro", sans-serif;
+    font-weight: 700;
+    font-size: 12pt;
+    color: #1a1a1a;
+    margin: 0.9cm 0 0.3cm 0;
+}
+
+.sectie p {
+    margin: 0 0 1em 0;
+}
+
+.sectie ul, .sectie ol {
+    margin: 0.4cm 0 1cm 0.8cm;
+    padding-left: 0.6cm;
+}
+
+.sectie li {
+    margin-bottom: 0.35cm;
+    line-height: 1.65;
+}
+
+.sectie strong {
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.sectie em {
+    font-style: italic;
+    color: #333333;
+}
