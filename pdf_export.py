@@ -394,3 +394,12 @@ def maak_pdf(
     )
 
     return uitvoerpad
+
+def maak_pdf(
+    *,
+    titel=None,
+    bron="Bron onbekend",
+    analyse_tekst,
+    analyse_html=None,
+    lussen_grafiek_pad=None,
+    ...
