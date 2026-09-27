@@ -542,6 +542,7 @@ STRIKTE REGELS:
 - Behoud de tekst WOORD VOOR WOORD. Voeg niets toe, laat niets weg,
   verander geen formuleringen.
 - Je mag alleen opmaak toevoegen, geen inhoud.
+- Maak de tabel netjes.
 
 WAT JE DOET:
 - Herken koppen en maak ze <h2> of <h3>. Koppen zijn vaak genummerd
