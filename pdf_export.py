@@ -228,6 +228,7 @@ def maak_pdf(
     algemeen_html=None,
     persoonlijk_tekst,
     persoonlijk_html=None,
+    bord_onderschrift=None,
     uitvoerpad=None,
 ):
     datum = datetime.now().strftime("%d %B %Y").lstrip("0")
