@@ -1177,8 +1177,8 @@ if st.session_state.analyse_klaar:
         toekomst_tekst = st.session_state.toekomst_tekst
         toekomst_structuur = st.session_state.toekomst_structuur
 
-tekst_zonder_json = verwijder_json_blokken(toekomst_tekst)
-st.markdown(tekst_zonder_json)
+        tekst_zonder_json = verwijder_json_blokken(toekomst_tekst)
+        st.markdown(tekst_zonder_json)
 
         if toekomst_structuur and structuur:
             scenarios = toekomst_structuur.get("scenarios", [])
