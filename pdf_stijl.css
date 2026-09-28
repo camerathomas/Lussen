@@ -348,7 +348,7 @@ table {
     font-size: 10pt;
     page-break-inside: avoid;
     background: #ffffff;
-    table-layout: fixed;
+    table-layout: auto;
     word-wrap: break-word;
     overflow-wrap: break-word;
     hyphens: auto;
