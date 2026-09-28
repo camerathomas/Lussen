@@ -1387,6 +1387,8 @@ if st.button("🎨 Genereer PDF", type="primary"):
             if structuur:
                 try:
                     lussen_png = maak_lussen_png(structuur, "pdfs/lussen.png")
+                    st.write(f"DEBUG: lussen_png = {lussen_png}")
+                    st.write(f"DEBUG: bestaat = {os.path.exists(lussen_png) if lussen_png else 'None'}")
                 except Exception as ex:
                     st.warning(f"Kon lussengrafiek niet maken: {ex}")
 
