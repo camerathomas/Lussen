@@ -272,7 +272,6 @@ REGELS:
   dieren, voertuigen, handen, ogen, monden.
 - Het symbool mag absurd of satirisch zijn, maar moet
   in één oogopslag te begrijpen zijn.
-- Het symbool is eenvoudig en herkenbaar.
 - Het geheel is grappig, niet beledigend.
 - Geen politieke partijen, geen personen bij naam.
 - Gebruik alleen eenvoudige SVG-vormen (cirkels, driehoeken,
