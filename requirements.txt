@@ -6,3 +6,4 @@ plotly
 networkx
 weasyprint
 kaleido
+matplotlib
