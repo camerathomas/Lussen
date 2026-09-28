@@ -87,7 +87,7 @@ def maak_lussen_png(structuur, pad="pdfs/lussen.png"):
             x, y - 0.18,
             lus.get("naam", ""),
             ha="center", va="top",
-            fontsize=9,
+            fontsize=12,
             color="#333333",
             zorder=4,
         )
