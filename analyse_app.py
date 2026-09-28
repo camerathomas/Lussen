@@ -1349,7 +1349,9 @@ if st.button("🎨 Genereer PDF", type="primary"):
             from grafiek_png import maak_lussen_png, maak_scenario_png
 
             client = genai.Client(api_key=api_key)
-
+            # --- Variabelen ophalen ---
+            structuur = st.session_state.structuur
+            toekomst_structuur = st.session_state.toekomst_structuur
             # --- Grafieken als PNG ---
             lussen_png = None
             if structuur:
