@@ -15,7 +15,7 @@ st.set_page_config(page_title="DenkKrant Analyse", layout="wide")
 # === MODELLEN (met fallback) ===
 MODELLEN = [
     "gemini-3.5-flash-lite",
-    "gemini-2.5-flash",
+    "gemini-3.1-flash-lite",
 ]
 
 
