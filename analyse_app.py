@@ -1076,16 +1076,13 @@ if st.session_state.analyse_klaar:
             st.warning(f"Kon de grafiek niet tekenen: {e}")
 
     # Tekstuele analyse
-    st.markdown("---")
-    st.markdown("### Analyse")
-
-    tekst_zonder_json = re.sub(
-        r"={2,}\s*JSON\s*={2,}.*?={2,}\s*EINDE\s*JSON\s*={2,}",
-        "",
-        volledige_tekst,
-        flags=re.DOTALL | re.IGNORECASE,
-    )
-    st.markdown(tekst_zonder_json)
+tekst_zonder_json = re.sub(
+    r"={2,}\s*JSON\s*={2,}.*?={2,}\s*EINDE\s*JSON\s*={2,}",
+    "",
+    volledige_tekst,
+    flags=re.DOTALL | re.IGNORECASE,
+)
+st.markdown(tekst_zonder_json)
 
     # === NARRATIEVE ANALYSE ===
     st.markdown("---")
