@@ -576,9 +576,10 @@ WAT JE DOET:
   (bijv. "1. Iets", "DEEL 1: Iets") of duidelijk een sectietitel.
 - Zet kernwoorden tussen haakjes (zoals "(Geopolitieke spanning)") in <strong>.
 - Maak lijsten met <ul> en <li>, of <ol> en <li> als ze genummerd zijn.
-- Gebruik <em> voor cursieve nadruk waar dat de leesbaarheid dient.
+- Gebruik <em> voor cursieve nadruk op een kernwoord.
 - Elk blok doorlopende tekst wordt een <p>.
 - Gebruik <h2> voor hoofdsecties en <h3> voor subsecties.
+- Als je een tabel tegenkomt (rijen met | of tabs als scheiding), maak er dan een <table> van met <thead>, <tbody>, <tr>, <th> en <td>. Gebruik <th> voor de kopregel.
 
 WAT JE NIET DOET:
 - Geen <html>, <head>, <body>, <div>, <span>, <style>, <script>.
