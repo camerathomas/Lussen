@@ -508,3 +508,41 @@ li {
     font-style: italic;
     color: #333333;
 }
+/* ---------- Zesde hoofdstuk: satirische noot ---------- */
+
+.hoofdstuk.h6 {
+    background: #f7f3ec;
+}
+
+.bord-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1cm 0 0.6cm 0;
+}
+
+.bord-container svg {
+    max-width: 8cm;
+    max-height: 8cm;
+    width: auto;
+    height: auto;
+}
+
+.bord-onderschrift {
+    font-family: "Inter", "Source Sans Pro", sans-serif;
+    font-size: 11pt;
+    font-style: italic;
+    color: #333333;
+    text-align: center;
+    margin: 0.4cm 0 0 0;
+    line-height: 1.5;
+}
+
+.bord-voetnoot {
+    font-family: "Inter", "Source Sans Pro", sans-serif;
+    font-size: 9.5pt;
+    color: #999999;
+    text-align: center;
+    margin: 0.8cm 0 0 0;
+    line-height: 1.4;
+}
