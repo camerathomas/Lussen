@@ -228,6 +228,7 @@ def maak_pdf(
     algemeen_html=None,
     persoonlijk_tekst,
     persoonlijk_html=None,
+    svg_bord=None,
     bord_onderschrift=None,
     uitvoerpad=None,
 ):
