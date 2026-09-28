@@ -136,7 +136,7 @@ def maak_lussen_png(structuur, pad="pdfs/lussen.png"):
         handles=legenda_items,
         loc="upper left",
         bbox_to_anchor=(1.02, 1.0),
-        fontsize=8,
+        fontsize=11,
         frameon=False,
         borderaxespad=0,
     )
