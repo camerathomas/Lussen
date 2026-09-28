@@ -134,11 +134,12 @@ def maak_lussen_png(structuur, pad="pdfs/lussen.png"):
 
     ax.legend(
         handles=legenda_items,
-        loc="upper right",
+        loc="upper left",
+        bbox_to_anchor=(1.02, 1.0),
         fontsize=8,
         frameon=False,
+        borderaxespad=0,
     )
-
     fig.tight_layout()
     fig.savefig(pad, bbox_inches="tight", facecolor="#ffffff")
     plt.close(fig)
