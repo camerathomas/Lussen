@@ -1449,7 +1449,21 @@ if st.button("🎨 Genereer PDF", type="primary"):
                         st.warning(
                             f"Kon scenariografiek {sc.get('id')} niet maken: {ex}"
                         )
+            # --- Satirisch verkeersbord ophalen ---
+            from opmaak_ai import haal_bord_en_onderschrift
 
+            svg_bord = None
+            bord_onderschrift = None
+            try:
+                bord_prompt = (
+                    f"{SLEUTEL}\n\n"
+                    f"--- TEKST OM EEN BORD VOOR TE MAKEN ---\n\n"
+                    f"{st.session_state.schone_tekst}"
+                )
+                bord_antwoord, _ = vraag_ai(client, bord_prompt)
+                svg_bord, bord_onderschrift = haal_bord_en_onderschrift(bord_antwoord)
+            except Exception as ex:
+                st.warning(f"Kon satirisch bord niet maken: {ex}")
             # --- Tekst opschonen (JSON eruit) ---
             analyse_schoon = _ontdoe_json(st.session_state.volledige_tekst)
             narratief_schoon = _ontdoe_json(st.session_state.narratief_tekst)
