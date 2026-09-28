@@ -1156,13 +1156,13 @@ st.markdown(tekst_zonder_json)
         toekomst_tekst = st.session_state.toekomst_tekst
         toekomst_structuur = st.session_state.toekomst_structuur
 
-        tekst_zonder_json = re.sub(
-            r"={2,}\s*JSON\s*={2,}.*?={2,}\s*EINDE\s*JSON\s*={2,}",
-            "",
-            toekomst_tekst,
-            flags=re.DOTALL | re.IGNORECASE,
-        )
-        st.markdown(tekst_zonder_json)
+tekst_zonder_json = re.sub(
+    r"={2,}\s*JSON\s*={2,}.*?={2,}\s*EINDE\s*JSON\s*={2,}",
+    "",
+    volledige_tekst,
+    flags=re.DOTALL | re.IGNORECASE,
+)
+st.markdown(tekst_zonder_json)
 
         if toekomst_structuur and structuur:
             scenarios = toekomst_structuur.get("scenarios", [])
