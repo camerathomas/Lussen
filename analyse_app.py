@@ -1054,14 +1054,30 @@ if not st.session_state.analyse_klaar:
                     st.caption(f"Analyse gegenereerd met {model_gebruikt}")
 
                     structuur = None
-                    start = volledige_tekst.find("=== JSON ===") + len("=== JSON ===")
+
+                    # Zoek het einde
                     einde = volledige_tekst.find("=== EINDE JSON ===")
-                    if start > 0 and einde > start:
+                    if einde == -1:
+                        einde = len(volledige_tekst)
+
+                    # Zoek het begin
+                    start = volledige_tekst.find("=== JSON ===")
+                    if start != -1:
+                        start = start + len("=== JSON ===")
+                    else:
+                        # Geen openingsmarkering: zoek het laatste { vóór het einde
+                        start = volledige_tekst.rfind("{", 0, einde)
+                        if start == -1:
+                            start = 0
+
+                    if start < einde:
                         json_tekst = volledige_tekst[start:einde].strip()
                         try:
                             structuur = json.loads(json_tekst)
                         except Exception as e:
                             st.warning(f"Kon JSON niet parsen: {e}")
+                    else:
+                        st.warning("Geen JSON-blok gevonden in de analyse.")
 
                     st.session_state.volledige_tekst = volledige_tekst
                     st.session_state.structuur = structuur
