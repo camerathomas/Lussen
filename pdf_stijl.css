@@ -342,12 +342,27 @@ a {
 /* ---------- Tabellen ---------- */
 
 table {
-    width: 100%;
+    width: 96%;
+    margin: 0.7cm 0 1cm 0.6cm;
     border-collapse: collapse;
-    margin: 0.7cm 0 1cm 0;
     font-size: 11pt;
     page-break-inside: avoid;
     background: #ffffff;
+    table-layout: fixed;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+table th,
+table td {
+    padding: 0.35cm 0.5cm;
+    vertical-align: top;
+    border-bottom: 0.5pt solid #e5e5e5;
+    line-height: 1.5;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
 }
 
 table thead {
@@ -361,13 +376,6 @@ table th {
     padding: 0.35cm 0.5cm;
     color: #000000;
     font-size: 10.5pt;
-}
-
-table td {
-    padding: 0.35cm 0.5cm;
-    vertical-align: top;
-    border-bottom: 0.5pt solid #e5e5e5;
-    line-height: 1.5;
 }
 
 table tbody tr:nth-child(even) {
