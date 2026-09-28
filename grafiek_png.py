@@ -180,7 +180,7 @@ def maak_scenario_png(structuur, scenario, pad=None):
 
     pos = nx.spring_layout(G, k=1.2, iterations=200, seed=42)
 
-    fig, ax = plt.subplots(figsize=(10, 8), dpi=150)
+    fig, ax = plt.subplots(figsize=(12, 8), dpi=150)
     fig.patch.set_facecolor("#ffffff")
     ax.set_facecolor("#ffffff")
 
