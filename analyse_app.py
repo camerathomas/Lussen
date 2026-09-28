@@ -249,6 +249,53 @@ BELANGRIJK:
 - Gebruik alleen letters A, B, C, ... als id's.
 - "omvang" en "sterkte" zijn 1 (klein/zwak) tot 5 (groot/sterk).
 - De JSON moet geldig zijn: geen commentaar, geen trailing comma's.
+
+=== DEEL 9: SATIRISCH VERKEERSBORD ===
+
+Ontwerp een satirisch verkeersbord dat het artikel samenvat.
+Het bord is een parodie op een bestaand Nederlands verkeersbord.
+
+KIES EEN VORM:
+- Driehoek met rode rand = gevaar
+- Rond met rode rand = verbod
+- Rond met blauwe achtergrond = gebod
+- Rechthoek = informatie
+- Achthoek = stop
+- Richtingaanwijzer = richting/keuze
+
+REGELS:
+- Gebruik de vorm die past bij de kern van het artikel.
+- Gebruik GEEN tekst op het bord, behalve als het bord "STOP" is.
+- Het bord werkt met een SYMBOOL, niet met woorden.
+- Het symbool is eenvoudig en herkenbaar.
+- Denk aan: pijlen, kruisen, uitroeptekens, voetgangers,
+  dieren, voertuigen, handen, ogen, monden.
+- Het symbool mag absurd of satirisch zijn, maar moet
+  in één oogopslag te begrijpen zijn.
+- Het symbool is eenvoudig en herkenbaar.
+- Het geheel is grappig, niet beledigend.
+- Geen politieke partijen, geen personen bij naam.
+- Gebruik alleen eenvoudige SVG-vormen (cirkels, driehoeken,
+  rechthoeken, lijnen, paden).
+- Geen externe fonts, geen externe afbeeldingen.
+
+Geef de output als SVG-code, in exact dit formaat:
+
+=== SVG ===
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  ...
+</svg>
+=== EINDE SVG ===
+
+De SVG moet:
+- 200x200 pixels zijn.
+- Zelfstandig renderen in een PDF.
+- Alleen standaard SVG-elementen gebruiken.
+- Geen <style>, <script> of externe verwijzingen bevatten.
+
+=== ONDERSCHRIFT ===
+[één regel tekst]
+=== EINDE ONDERSCHRIFT ===
 """
 
 # === TOEKOMST-SLEUTEL ===
