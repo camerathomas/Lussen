@@ -1103,12 +1103,12 @@ if st.session_state.analyse_klaar:
             st.warning(f"Kon de grafiek niet tekenen: {e}")
 
     # Tekstuele analyse
-tekst_zonder_json = verwijder_json_blokken(volledige_tekst)
-st.markdown(tekst_zonder_json)
+    tekst_zonder_json = verwijder_json_blokken(volledige_tekst)
+    st.markdown(tekst_zonder_json)
     # === NARRATIEVE ANALYSE ===
-st.markdown("---")
-st.markdown("### Narratieve analyse")
-st.caption("Dezelfde analyse, maar als leesbaar verhaal.")
+    st.markdown("---")
+    st.markdown("### Narratieve analyse")
+    st.caption("Dezelfde analyse, maar als leesbaar verhaal.")
 
     if st.button("Narratieve analyse", type="secondary"):
         if not structuur:
