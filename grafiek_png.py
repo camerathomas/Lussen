@@ -234,7 +234,7 @@ def maak_scenario_png(structuur, scenario, pad=None):
             x, y - 0.18,
             naam,
             ha="center", va="top",
-            fontsize=9,
+            fontsize=14,
             color="#333333",
             zorder=4,
         )
