@@ -1510,6 +1510,8 @@ if st.button("🎨 Genereer PDF", type="primary"):
                 algemeen_html=algemeen_html,
                 persoonlijk_tekst=st.session_state.persoonlijk_tekst,
                 persoonlijk_html=persoonlijk_html,
+                svg_bord=svg_bord,
+                bord_onderschrift=bord_onderschrift,
             )
             st.success(f"PDF gemaakt: {pad}")
             with open(pad, "rb") as f:
