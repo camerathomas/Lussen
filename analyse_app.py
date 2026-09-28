@@ -1363,7 +1363,6 @@ if st.session_state.analyse_klaar:
             st.markdown("---")
             st.markdown("### Jouw persoonlijke analyse")
             st.markdown(st.session_state.persoonlijk_tekst)
-
 st.markdown("---")
 st.markdown("### Exporteer als PDF")
 st.caption(
@@ -1374,21 +1373,21 @@ st.caption(
 if st.button("🎨 Genereer PDF", type="primary"):
     with st.spinner("PDF wordt opgebouwd..."):
         try:
-            from opmaak_ai import maak_html
+            from opmaak_ai import maak_html_meerdere
             from pdf_export import _ontdoe_json
             from grafiek_png import maak_lussen_png, maak_scenario_png
 
             client = genai.Client(api_key=api_key)
+
             # --- Variabelen ophalen ---
             structuur = st.session_state.structuur
             toekomst_structuur = st.session_state.toekomst_structuur
+
             # --- Grafieken als PNG ---
             lussen_png = None
             if structuur:
                 try:
                     lussen_png = maak_lussen_png(structuur, "pdfs/lussen.png")
-                    st.write(f"DEBUG: lussen_png = {lussen_png}")
-                    st.write(f"DEBUG: bestaat = {os.path.exists(lussen_png) if lussen_png else 'None'}")
                 except Exception as ex:
                     st.warning(f"Kon lussengrafiek niet maken: {ex}")
 
@@ -1410,19 +1409,24 @@ if st.button("🎨 Genereer PDF", type="primary"):
             algemeen_schoon = _ontdoe_json(st.session_state.algemeen_tekst)
             persoonlijk_schoon = _ontdoe_json(st.session_state.persoonlijk_tekst)
 
-            # --- HTML maken via AI ---
-            analyse_html = maak_html(
-                client, vraag_ai, analyse_schoon, OPMAAK_SLEUTEL,
+            # --- ÉÉN AI-call voor alle HTML ---
+            html_blokken = maak_html_meerdere(
+                client,
+                vraag_ai,
+                [
+                    analyse_schoon,
+                    narratief_schoon,
+                    algemeen_schoon,
+                    persoonlijk_schoon,
+                ],
+                OPMAAK_SLEUTEL,
             )
-            narratief_html = maak_html(
-                client, vraag_ai, narratief_schoon, OPMAAK_SLEUTEL,
-            )
-            algemeen_html = maak_html(
-                client, vraag_ai, algemeen_schoon, OPMAAK_SLEUTEL,
-            )
-            persoonlijk_html = maak_html(
-                client, vraag_ai, persoonlijk_schoon, OPMAAK_SLEUTEL,
-            )
+
+            # Veilig uitlezen (kan None bevatten als iets faalde)
+            analyse_html = html_blokken[0] if len(html_blokken) > 0 else None
+            narratief_html = html_blokken[1] if len(html_blokken) > 1 else None
+            algemeen_html = html_blokken[2] if len(html_blokken) > 2 else None
+            persoonlijk_html = html_blokken[3] if len(html_blokken) > 3 else None
 
             # --- Titel uit JSON ---
             titel = None
