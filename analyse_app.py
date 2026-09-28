@@ -1336,6 +1336,7 @@ if st.session_state.analyse_klaar:
 
 st.markdown("---")
 st.markdown("### Exporteer als PDF")
+toekomst_structuur = st.session_state.toekomst_structuur
 st.caption(
     "De AI herschrijft de tekst naar nette HTML: echte koppen, "
     "vetgedrukte kernwoorden, nette lijsten en tabellen."
