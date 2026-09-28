@@ -1333,29 +1333,84 @@ if st.session_state.analyse_klaar:
             st.markdown("---")
             st.markdown("### Jouw persoonlijke analyse")
             st.markdown(st.session_state.persoonlijk_tekst)
+
 st.markdown("---")
 st.markdown("### Exporteer als PDF")
+st.caption(
+    "De AI herschrijft de tekst naar nette HTML: echte koppen, "
+    "vetgedrukte kernwoorden, nette lijsten en tabellen."
+)
 
-if st.button("📄 Genereer PDF", type="primary"):
+if st.button("🎨 Genereer PDF", type="primary"):
     with st.spinner("PDF wordt opgebouwd..."):
         try:
-            # --- Titel uit JSON halen ---
+            from opmaak_ai import maak_html
+            from pdf_export import _ontdoe_json
+            from grafiek_png import maak_lussen_png, maak_scenario_png
+
+            client = genai.Client(api_key=api_key)
+
+            # --- Grafieken als PNG ---
+            lussen_png = None
+            if structuur:
+                try:
+                    lussen_png = maak_lussen_png(structuur, "pdfs/lussen.png")
+                except Exception as ex:
+                    st.warning(f"Kon lussengrafiek niet maken: {ex}")
+
+            scenario_pngs = {}
+            if toekomst_structuur and structuur:
+                for sc in toekomst_structuur.get("scenarios", []):
+                    try:
+                        pad_sc = maak_scenario_png(structuur, sc)
+                        if pad_sc:
+                            scenario_pngs[sc.get("id")] = pad_sc
+                    except Exception as ex:
+                        st.warning(
+                            f"Kon scenariografiek {sc.get('id')} niet maken: {ex}"
+                        )
+
+            # --- Tekst opschonen (JSON eruit) ---
+            analyse_schoon = _ontdoe_json(st.session_state.volledige_tekst)
+            narratief_schoon = _ontdoe_json(st.session_state.narratief_tekst)
+            algemeen_schoon = _ontdoe_json(st.session_state.algemeen_tekst)
+            persoonlijk_schoon = _ontdoe_json(st.session_state.persoonlijk_tekst)
+
+            # --- HTML maken via AI ---
+            analyse_html = maak_html(
+                client, vraag_ai, analyse_schoon, OPMAAK_SLEUTEL,
+            )
+            narratief_html = maak_html(
+                client, vraag_ai, narratief_schoon, OPMAAK_SLEUTEL,
+            )
+            algemeen_html = maak_html(
+                client, vraag_ai, algemeen_schoon, OPMAAK_SLEUTEL,
+            )
+            persoonlijk_html = maak_html(
+                client, vraag_ai, persoonlijk_schoon, OPMAAK_SLEUTEL,
+            )
+
+            # --- Titel uit JSON ---
             titel = None
             if structuur and isinstance(structuur, dict):
                 titel = structuur.get("titel")
 
-            # --- PDF genereren (zonder grafieken) ---
+            # --- PDF genereren ---
             pad = maak_pdf(
                 titel=titel,
                 bron="Bron: onbekend",
                 analyse_tekst=st.session_state.volledige_tekst,
-                lussen_grafiek_pad=None,
+                analyse_html=analyse_html,
+                lussen_grafiek_pad=lussen_png,
                 narratief_tekst=st.session_state.narratief_tekst,
+                narratief_html=narratief_html,
                 toekomst_tekst=st.session_state.toekomst_tekst,
                 toekomst_structuur=st.session_state.toekomst_structuur,
-                scenario_grafiek_paden={},
+                scenario_grafiek_paden=scenario_pngs,
                 algemeen_tekst=st.session_state.algemeen_tekst,
+                algemeen_html=algemeen_html,
                 persoonlijk_tekst=st.session_state.persoonlijk_tekst,
+                persoonlijk_html=persoonlijk_html,
             )
             st.success(f"PDF gemaakt: {pad}")
             with open(pad, "rb") as f:
@@ -1367,70 +1422,3 @@ if st.button("📄 Genereer PDF", type="primary"):
                 )
         except Exception as e:
             st.error(f"Fout bij PDF-generatie: {e}")
-
-st.markdown("---")
-st.markdown("### Exporteer als PDF (met AI-opmaak)")
-st.caption(
-    "De AI herschrijft de tekst naar nette HTML: echte koppen, "
-    "vetgedrukte kernwoorden, nette lijsten."
-)
-
-if st.button("🎨 Genereer PDF (met AI-opmaak)", type="primary"):
-    with st.spinner("AI maakt nette HTML van de tekst..."):
-        try:
-            from opmaak_ai import maak_html
-
-            client = genai.Client(api_key=api_key)
-
-            analyse_html = maak_html(
-                client, vraag_ai,
-                st.session_state.volledige_tekst,
-                OPMAAK_SLEUTEL,
-            )
-            narratief_html = maak_html(
-                client, vraag_ai,
-                st.session_state.narratief_tekst,
-                OPMAAK_SLEUTEL,
-            )
-            algemeen_html = maak_html(
-                client, vraag_ai,
-                st.session_state.algemeen_tekst,
-                OPMAAK_SLEUTEL,
-            )
-            persoonlijk_html = maak_html(
-                client, vraag_ai,
-                st.session_state.persoonlijk_tekst,
-                OPMAAK_SLEUTEL,
-            )
-
-            # Titel uit JSON halen
-            titel = None
-            if structuur and isinstance(structuur, dict):
-                titel = structuur.get("titel")
-
-            pad = maak_pdf(
-                titel=titel,
-                bron="Bron: onbekend",
-                analyse_tekst=st.session_state.volledige_tekst,
-                analyse_html=analyse_html,
-                lussen_grafiek_pad=None,
-                narratief_tekst=st.session_state.narratief_tekst,
-                narratief_html=narratief_html,
-                toekomst_tekst=st.session_state.toekomst_tekst,
-                toekomst_structuur=st.session_state.toekomst_structuur,
-                scenario_grafiek_paden={},
-                algemeen_tekst=st.session_state.algemeen_tekst,
-                algemeen_html=algemeen_html,
-                persoonlijk_tekst=st.session_state.persoonlijk_tekst,
-                persoonlijk_html=persoonlijk_html,
-            )
-            st.success(f"PDF gemaakt: {pad}")
-            with open(pad, "rb") as f:
-                st.download_button(
-                    label="⬇️ Download PDF (AI-opmaak)",
-                    data=f,
-                    file_name=os.path.basename(pad),
-                    mime="application/pdf",
-                )
-        except Exception as e:
-            st.error(f"Fout bij AI-opmaak PDF: {e}")
