@@ -279,13 +279,13 @@ REGELS:
   rechthoeken, lijnen, paden).
 - Geen externe fonts, geen externe afbeeldingen.
 
-Geef de output als SVG-code, in exact dit formaat:
+Geef de output in exact dit formaat:
 
-=== SVG ===
+=== BORD ===
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
   ...
 </svg>
-=== EINDE SVG ===
+=== EINDE BORD ===
 
 De SVG moet:
 - 200x200 pixels zijn.
@@ -294,7 +294,7 @@ De SVG moet:
 - Geen <style>, <script> of externe verwijzingen bevatten.
 
 === ONDERSCHRIFT ===
-[één regel tekst]
+[één regel tekst, max 8 woorden]
 === EINDE ONDERSCHRIFT ===
 """
 
