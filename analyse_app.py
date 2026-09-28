@@ -46,6 +46,33 @@ def vraag_ai(client, prompt, modellen=MODELLEN):
             continue
     raise laatste_fout
 
+def verwijder_json_blokken(tekst):
+    """Haalt JSON-blokken uit de tekst, ook als de markeringen ontbreken."""
+    if not tekst:
+        return ""
+
+    tekst = re.sub(
+        r"={2,}\s*JSON\s*={2,}.*?={2,}\s*EINDE\s*JSON\s*={2,}",
+        "",
+        tekst,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+
+    tekst = re.sub(
+        r'\{\s*"titel"\s*:.*?\}\s*$',
+        "",
+        tekst,
+        flags=re.DOTALL,
+    )
+
+    tekst = re.sub(
+        r"={2,}\s*DEEL\s*8[^\n]*={2,}",
+        "",
+        tekst,
+        flags=re.IGNORECASE,
+    )
+
+    return tekst.strip()
 
 # === DE SLEUTEL ===
 SLEUTEL = """
