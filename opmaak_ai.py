@@ -146,3 +146,51 @@ def maak_html_meerdere(client, vraag_ai, teksten, opmaak_sleutel):
         resultaat.append(html if html and "<" in html else None)
 
     return resultaat
+
+def haal_bord_en_onderschrift(tekst):
+    """
+    Haalt de SVG en het onderschrift uit de AI-output.
+    Geeft een tuple terug: (svg, onderschrift) of (None, None).
+    """
+    if not tekst:
+        return None, None
+
+    import re
+
+    # SVG ophalen
+    svg = None
+    match = re.search(
+        r"={2,}\s*BORD\s*={2,}(.*?)={2,}\s*EINDE\s*BORD\s*={2,}",
+        tekst,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    if match:
+        svg_ruw = match.group(1).strip()
+        svg_match = re.search(
+            r"<svg\b.*?</svg>",
+            svg_ruw,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+        if svg_match:
+            svg = svg_match.group(0).strip()
+
+    if not svg:
+        svg_match = re.search(
+            r"<svg\b.*?</svg>",
+            tekst,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+        if svg_match:
+            svg = svg_match.group(0).strip()
+
+    # Onderschrift ophalen
+    onderschrift = None
+    match = re.search(
+        r"={2,}\s*ONDERSCHRIFT\s*={2,}(.*?)={2,}\s*EINDE\s*ONDERSCHRIFT\s*={2,}",
+        tekst,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    if match:
+        onderschrift = match.group(1).strip()
+
+    return svg, onderschrift
