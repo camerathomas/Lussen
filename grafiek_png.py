@@ -78,7 +78,7 @@ def maak_lussen_png(structuur, pad="pdfs/lussen.png"):
             x, y,
             lid,
             ha="center", va="center",
-            fontsize=14,
+            fontsize=20,
             fontweight="bold",
             color="white",
             zorder=4,
