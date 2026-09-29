@@ -1470,10 +1470,10 @@ if st.button("🎨 Genereer PDF", type="primary"):
             except Exception as ex:
                 st.warning(f"Kon satirisch bord niet maken: {ex}")
             # --- Tekst opschonen (JSON eruit) ---
-            analyse_schoon = _ontdoe_json(st.session_state.volledige_tekst)
-            narratief_schoon = _ontdoe_json(st.session_state.narratief_tekst)
-            algemeen_schoon = _ontdoe_json(st.session_state.algemeen_tekst)
-            persoonlijk_schoon = _ontdoe_json(st.session_state.persoonlijk_tekst)
+            analyse_schoon = verwijder_json_blokken(st.session_state.volledige_tekst)
+            narratief_schoon = verwijder_json_blokken(st.session_state.narratief_tekst)
+            algemeen_schoon = verwijder_json_blokken(st.session_state.algemeen_tekst)
+            persoonlijk_schoon = verwijder_json_blokken(st.session_state.persoonlijk_tekst)
 
             # --- ÉÉN AI-call voor alle HTML ---
             html_blokken = maak_html_meerdere(
