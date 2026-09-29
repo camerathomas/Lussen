@@ -71,7 +71,13 @@ def verwijder_json_blokken(tekst):
         tekst,
         flags=re.IGNORECASE,
     )
-
+    # Verwijder Deel 9 (satirisch bord) volledig uit de app-tekst
+    tekst = re.sub(
+        r"={2,}\s*DEEL\s*9[^\n]*={2,}.*",
+        "",
+        tekst,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
     return tekst.strip()
 
 # === DE SLEUTEL ===
