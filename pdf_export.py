@@ -228,8 +228,6 @@ def maak_pdf(
     algemeen_html=None,
     persoonlijk_tekst,
     persoonlijk_html=None,
-    svg_bord=None,
-    bord_onderschrift=None,
     uitvoerpad=None,
 ):
     datum = datetime.now().strftime("%d %B %Y").lstrip("0")
@@ -308,32 +306,6 @@ def maak_pdf(
                 "h5",
             )
         )
-
-            # --- Hoofdstuk 6: Satirische noot ---
-    if svg_bord:
-        onderschrift_html = ""
-        if bord_onderschrift:
-            onderschrift_html = (
-                f'<p class="bord-onderschrift">{_esc(bord_onderschrift)}</p>'
-            )
-
-        delen.append(f"""
-        <section class="hoofdstuk h6">
-            <div class="hoofdstuk-nummer">6</div>
-            <h2>Satirische noot</h2>
-            <div class="hoofdstuk-lijn"></div>
-            <div class="sectie" style="text-align: center;">
-                <div class="bord-container">
-                    {svg_bord}
-                </div>
-                {onderschrift_html}
-                <p class="bord-voetnoot">
-                    Een satirische knipoog naar het artikel.
-                    Niet bedoeld als analyse, wel als afsluiting.
-                </p>
-            </div>
-        </section>
-        """)        
 
     body = "\n".join(delen)
 
